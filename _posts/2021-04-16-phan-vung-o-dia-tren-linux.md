@@ -18,6 +18,7 @@ comments: true
 - Trên hệ thống Linux/UNIX, fdisk là công cụ CLI được sử dụng để phân chia phân vùng ổ đĩa.
 
 - Hiển thị ổ đĩa có trên Linux: Để tạo được phân vùng ổ cứng trên Linux, bạn phải biết được tên hiện tại của ổ đĩa đó đang đặt là gì. Sử dụng lệnh ```lsblk -fp``` để hiển thị ổ cứng và dung lượng của ổ để bắt đầu quá trình tạo ổ.
+
 ```
 datnt@ssivn:~$ lsblk -fp
 NAME        FSTYPE   LABEL UUID                                 MOUNTPOINT
