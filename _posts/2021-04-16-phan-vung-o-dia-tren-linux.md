@@ -99,5 +99,8 @@ Command (m for help): d
 Selected partition 1
 Partition 1 has been deleted.
 
-Command (m for help):
+Command (m for help): w
+The partition table has been altered.
+Calling ioctl() to re-read partition table.
+Syncing disks.
 ```
