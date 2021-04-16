@@ -11,7 +11,7 @@ comments: true
 
 * TOC
 {:toc}
-**1. Khái niệm File System trong Linux**
+<h1>**1. Khái niệm File System trong Linux**</h1>
 
 Filesystem là các phương pháp và các cấu trúc dữ liệu mà một hệ điều hành sử dụng để theo dõi các tập tin trên ổ đĩa hoặc phân vùng. Có thể tạm dịch filesystem là một hệ thống tập tin. Đó là các tập tin được tổ chức trên ổ đĩa. Thuật ngữ này cũng được sử dụng để chỉ một phân vùng hoặc ổ đĩa được sử dụng để lưu trữ các tập tin hoặc loại hệ thống tập tin.
 Sự khác biệt giữa một ổ đĩa hoặc phân vùng và hệ thống tập tin được lưu trên đó là rất quan trọng. Một vài chương trình (bao gồm cả chương trình tạo ra các hệ thống tập tin) hoạt động trực tiếp trên các sector thô của một ổ đĩa hoặc phân vùng. Nếu có một hệ thống tập tin tồn tại, nó sẽ bị phá hủy hoặc hỏng hóc.
