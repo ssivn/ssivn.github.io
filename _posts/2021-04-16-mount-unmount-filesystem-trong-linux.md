@@ -1,6 +1,6 @@
 ---
 title:  "Mount và Unmount trong Linux"
-date:   2021-04-15
+date:   2021-04-16
 excerpt: "Tìm hiểu chi tiết về mount và unmount trong Linux"
 project: true
 tag:
