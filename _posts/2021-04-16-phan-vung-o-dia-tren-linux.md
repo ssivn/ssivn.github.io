@@ -136,3 +136,15 @@ NAME        FSTYPE   LABEL UUID                                 MOUNTPOINT
 └─/dev/sdb1 ext4           b47ba0dc-e775-4826-9c1b-ce35888731f5
 /dev/sr0
 ```
+
+**5. Hiển thị dung lượng ổ đĩa trên Linux**
+
+-	Sử dụng lệnh ```df -k``` để hiển thị dung lượng đĩa trống trên mỗi đĩa được gắn. Dung lượng ổ đĩa có thể sử dụng được df báo cáo chỉ phản ánh 90% dung lượng đầy đủ, vì thống kê báo cáo để lại khoảng trống 10% trên tổng dung lượng khả dụng. 10% này để trống để có hiệu suất tốt hơn
+
+```
+datnt@ssivn:~$ df -k
+Filesystem     1K-blocks    Used Available Use% Mounted on
+udev              977816       0    977816   0% /dev
+tmpfs             201732    1192    200540   1% /run
+/dev/sda2       20508240 3
+```
