@@ -30,7 +30,9 @@ NAME        FSTYPE   LABEL UUID                                 MOUNTPOINT
 /dev/sr0
 datnt@ssivn:~$
 ```
+
 - Tạo phân vùng mới: Nhập lệnh ```fdisk /new_partition``` để bắt đầu tạo phân vùng mới. Ở đây phân vùng mới tôi cần tạo là ```/dev/sdb```
+
 ```
 datnt@ssivn:~$ sudo fdisk /dev/sdb
 
@@ -43,7 +45,9 @@ Created a new DOS disklabel with disk identifier 0xbed53589.
 
 Command (m for help):
 ```
+
 - Gõ lệnh ```n``` để bắt đầu tạo phân vùng, hệ thống sẽ bắt chúng ta khai báo phân vùng mới này là primary (phân vùng chính) hoặc extended (phân vùng mở rộng). Gõ ```p``` để tạo phân vùng mới
+
 ```
 Command (m for help): n
 Partition type
@@ -51,7 +55,9 @@ Partition type
    e   extended (container for logical partitions)
 Select (default p): p
 ```
+
 -	Tiếp đến, nhập số phần vùng sẽ được tạo, tối đa 4 phân vùng primary. Trong ví dụ này, tôi tạo 1 phân vùng nên sẽ nhập 1 hoặc ấn enter ```(default = 1)```. Hệ thống sẽ thông báo yêu cầu bạn nhập kích thước của phân vùng mới sẽ tạo. Bạn có thể nhập kích thước bắt đầu và kết thúc của phân vùng trong mục First sector và Last sector. Bạn cũng có thể để default và ấn enter, hệ thống sẽ tạo phân vùng là tất cả không gian sẵn có.
+
 ```
 Partition number (1-4, default 1): 1
 First sector (2048-41943039, default 2048):
@@ -62,13 +68,16 @@ Created a new partition 1 of type 'Linux' and of size 4.7 GiB.
 Command (m for help):
 ```
 - Gõ ```w``` để lưu thay đổi
+
 ```
 Command (m for help): w
 The partition table has been altered.
 Calling ioctl() to re-read partition table.
 Syncing disks.
 ```
+
 - Sai khi tạo phân vùng mới, cần phải khai báo với hệ điều hành để cập nhật bảng phân vùng. Sử dụng lệnh ```partprobe /partition```
+
 ```
 datnt@ssivn:~$ sudo partprobe /dev/sdb
 datnt@ssivn:~$
