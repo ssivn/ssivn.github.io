@@ -20,7 +20,7 @@ Hầu hết các loại hệ thống tập tin UNIX đều có cấu trúc chung
 
 - **Superblock**: chưa các thông tin về hệ thống tập tin một cách tổng thể, chẳng hạn như kích thước của nó (thông tin chính xác ở đây phụ thuộc vào hệ thống tập tin)
 - **Inode**: chứa tất cả các thông tin về một tập tin, ngoại trừ tên của nó. Tên được lưu trữ trong thư mục, cùng với số lượng lớn các inode. Mục nhập thư mục bao gồm tên tập tin và các số lượng inode đại diện cho tập tin đó. Inode chứa khối lượng lớn các khối dữ liệu, được sử dụng để lưu trữ dữ liệu trong tập tin.
-- Data block: đây là nơi dữ liệu được lưu trữ. Vì một thư mục chỉ đơn giản là một tệp được định dạng đặc biệt, các thư mục cũng được chứa trong các khối dữ liệu. Một khối dữ liệu được cấp phát có thể thuộc về một và chỉ một tệp trong hệ thống. Nếu một khối dữ liệu không được cấp phát cho một tệp, thì nó là miễn phí sẵn sàng cấp phát khi cần.
+- **Data block**: đây là nơi dữ liệu được lưu trữ. Vì một thư mục chỉ đơn giản là một tệp được định dạng đặc biệt, các thư mục cũng được chứa trong các khối dữ liệu. Một khối dữ liệu được cấp phát có thể thuộc về một và chỉ một tệp trong hệ thống. Nếu một khối dữ liệu không được cấp phát cho một tệp, thì nó là miễn phí sẵn sàng cấp phát khi cần.
 
 **2. Các kiểu File System trong hệ thống**
 
@@ -40,7 +40,7 @@ Linux có khá nhiều dạng file hệ thống, và mỗi loại sẽ được 
 
 Filesystem của hệ điều hành Linux được tổ chức theo tiêu chuẩn cấp bậc của hệ thống tập tin Filesystem Hierarchy Standard (FHS). Tiêu chuẩn này định nghĩa mục đích của mỗi thư mục.
  
-Linux dùng ký tự “/” để tách các đường dẫn (khác với Windows sử dụng “\” để tách các đường dẫn). Tất cả các tập tin thư mục đều được bắt đầu từ thư mục gốc (/), cũng không có ký tự ổ đĩa giống Windows.
+Linux dùng ký tự ```/``` để tách các đường dẫn (khác với Windows sử dụng ```\``` để tách các đường dẫn). Tất cả các tập tin thư mục đều được bắt đầu từ thư mục gốc (/), cũng không có ký tự ổ đĩa giống Windows.
 ```
 datnt@ssivn:/$ ls /
 bin   cdrom  etc   initrd.img      lib    lost+found  mnt  proc  run   snap  swap.img  tmp  var      vmlinuz.old
@@ -67,7 +67,7 @@ Chức năng của các thư mục:
 
 **4. Các lệnh hiển thị kiểu filesystem trong Linux**
 
-- Lệnh ```**df**```: là viết tắt của Disk Filesystem, cung cấp thông tin sử dụng không gian đĩa của hệ thống tệp của bạn. Sử dụng tùy chọn “-T” với lệnh df để lấy kiểu hệ thống.
+- Lệnh ```df```: là viết tắt của Disk Filesystem, cung cấp thông tin sử dụng không gian đĩa của hệ thống tệp của bạn. Sử dụng tùy chọn “-T” với lệnh df để lấy kiểu hệ thống.
 ```
 datnt@ssivn:/$ df -khT
 Filesystem     Type      Size  Used Avail Use% Mounted on
@@ -81,7 +81,7 @@ tmpfs          tmpfs     449M     0  449M   0% /sys/fs/cgroup
 tmpfs          tmpfs      90M     0   90M   0% /run/user/1000
 datnt@ssivn:/$
 ```
-- Lệnh ```**/etc/fstab**```: nếu bạn chỉ cần in nội dung của tệp trong terminal để xác định loại hệ thống của tệp tin trên Linux. Nó chứa các tên mount point, loại hệ thống tệp, các tùy chọn gắn kết,…
+- Lệnh ```/etc/fstab```: nếu bạn chỉ cần in nội dung của tệp trong terminal để xác định loại hệ thống của tệp tin trên Linux. Nó chứa các tên mount point, loại hệ thống tệp, các tùy chọn gắn kết,…
  ```
  datnt@ssivn:/$ cat /etc/fstab
 UUID=cca24041-cdb0-4293-9e40-ae3085416ea2 / ext4 defaults 0 0
