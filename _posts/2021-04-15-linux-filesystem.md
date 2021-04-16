@@ -1,10 +1,13 @@
 ---
-title: Tìm hiểu về Filesystem trong Linux
-tags: linux os, filesystem
-article_header:
-  type: cover
-  image:
-    src: /screenshot.jpg
+layout: post
+title:  "Tìm hiểu về Filesystem trong Linux"
+date:   2021-04-15
+excerpt: "Chi tiết về Filesystem trong Linux 2021"
+project: true
+tag:
+- linux os 
+- filesystem
+comments: true
 ---
 
 
