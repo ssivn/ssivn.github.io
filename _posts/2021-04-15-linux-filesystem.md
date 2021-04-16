@@ -60,3 +60,27 @@ Chức năng của các thư mục:
 - /root: các tệp cá nhân của người quản trị (root account)
 - /proc: sử dụng cho nhân Linux, chúng được sử dụng bởi kernel để xuất dữ liệu sang không gian người dùng.
 
+**4. Các lệnh hiển thị kiểu filesystem trong Linux**
+
+- Lệnh “df”: là viết tắt của Disk Filesystem, cung cấp thông tin sử dụng không gian đĩa của hệ thống tệp của bạn. Sử dụng tùy chọn “-T” với lệnh df để lấy kiểu hệ thống.
+```
+datnt@ssivn:/$ df -khT
+Filesystem     Type      Size  Used Avail Use% Mounted on
+udev           devtmpfs  419M     0  419M   0% /dev
+tmpfs          tmpfs      90M  1.2M   89M   2% /run
+/dev/sda2      ext4       20G  4.2G   15G  23% /
+tmpfs          tmpfs     449M     0  449M   0% /dev/shm
+tmpfs          tmpfs     5.0M     0  5.0M   0% /run/lock
+tmpfs          tmpfs     449M     0  449M   0% /sys/fs/cgroup
+/dev/loop0     squashfs   89M   89M     0 100% /snap/core/7270
+tmpfs          tmpfs      90M     0   90M   0% /run/user/1000
+datnt@ssivn:/$
+```
+- Lệnh “/etc/fstab”: nếu bạn chỉ cần in nội dung của tệp trong terminal để xác định loại hệ thống của tệp tin trên Linux. Nó chứa các tên mount point, loại hệ thống tệp, các tùy chọn gắn kết,…
+ ```
+ datnt@ssivn:/$ cat /etc/fstab
+UUID=cca24041-cdb0-4293-9e40-ae3085416ea2 / ext4 defaults 0 0
+/swap.img       none    swap    sw      0       0
+datnt@ssivn:/$
+```
+
