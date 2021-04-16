@@ -11,10 +11,10 @@ tag:
 comments: true
 ---
 
-**1. Phân vùng là gì?**
+<h1>1. Phân vùng là gì?</h1>
 - Là tập hợp các vùng ghi nhớ dữ liệu trên các cylinder gần nhau với dung lượng theo thiết lập của người sử dụng để sử dụng cho các mục đích khác nhau. Sự phân chia phân vùng giúp cho ổ đĩa cứng có thể định dạng các loại tập tin khác nhau để có thể cài đặt nhiều hệ điều hành trên cùng 1 ổ đĩa cứng.
 
-**2. Phân vùng ổ đĩa trên Linux sử dụng fdisk**
+<h1>2. Phân vùng ổ đĩa trên Linux sử dụng fdisk</h1>
 - Trên hệ thống Linux/UNIX, fdisk là công cụ CLI được sử dụng để phân chia phân vùng ổ đĩa.
 
 - Hiển thị ổ đĩa có trên Linux: Để tạo được phân vùng ổ cứng trên Linux, bạn phải biết được tên hiện tại của ổ đĩa đó đang đặt là gì. Sử dụng lệnh ```lsblk -fp``` để hiển thị ổ cứng và dung lượng của ổ để bắt đầu quá trình tạo ổ.
@@ -83,7 +83,7 @@ datnt@ssivn:~$ sudo partprobe /dev/sdb
 datnt@ssivn:~$
 ```
 
-**3. Xóa phân vùng ổ đĩa trên Linux**
+<h1>3. Xóa phân vùng ổ đĩa trên Linux</h1>
 
 -	Để xóa phân vùng đã có, sử dụng lệnh ```fdisk /partition```, gõ lệnh “d” sau đó chọn phân vùng cần xóa trong ổ đĩa đó.
 
@@ -105,7 +105,7 @@ Calling ioctl() to re-read partition table.
 Syncing disks.
 ```
 
-**4. Phân vùng ổ đĩa Filesystem**
+<h1>4. Phân vùng ổ đĩa Filesystem</h1>
 
 -	Để sử dụng được, phân vùng sau khi tạo phải được định dạng. Để tạo 1 Filesystem mới, sau khi tạo phân vùng xong, sử dụng lệnh ```/sbin/mkfs``` để tạo phân vùng theo kiểu filesystem cần tạo. Trong ví dụ này, tôi tạo ra 1 phân vùng Ext4 mới
 
@@ -137,7 +137,7 @@ NAME        FSTYPE   LABEL UUID                                 MOUNTPOINT
 /dev/sr0
 ```
 
-**5. Hiển thị dung lượng ổ đĩa trên Linux**
+<h1>5. Hiển thị dung lượng ổ đĩa trên Linux</h1>
 
 -	Sử dụng lệnh ```df -k``` để hiển thị dung lượng đĩa trống trên mỗi đĩa được gắn. Dung lượng ổ đĩa có thể sử dụng được df báo cáo chỉ phản ánh 90% dung lượng đầy đủ, vì thống kê báo cáo để lại khoảng trống 10% trên tổng dung lượng khả dụng. 10% này để trống để có hiệu suất tốt hơn
 
