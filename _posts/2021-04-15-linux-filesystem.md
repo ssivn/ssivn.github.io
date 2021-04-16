@@ -22,7 +22,7 @@ Hầu hết các loại hệ thống tập tin UNIX đều có cấu trúc chung
 - **Inode**: chứa tất cả các thông tin về một tập tin, ngoại trừ tên của nó. Tên được lưu trữ trong thư mục, cùng với số lượng lớn các inode. Mục nhập thư mục bao gồm tên tập tin và các số lượng inode đại diện cho tập tin đó. Inode chứa khối lượng lớn các khối dữ liệu, được sử dụng để lưu trữ dữ liệu trong tập tin.
 - **Data block**: đây là nơi dữ liệu được lưu trữ. Vì một thư mục chỉ đơn giản là một tệp được định dạng đặc biệt, các thư mục cũng được chứa trong các khối dữ liệu. Một khối dữ liệu được cấp phát có thể thuộc về một và chỉ một tệp trong hệ thống. Nếu một khối dữ liệu không được cấp phát cho một tệp, thì nó là miễn phí sẵn sàng cấp phát khi cần.
 
-**2. Các kiểu File System trong hệ thống**
+<h1>**2. Các kiểu File System trong hệ thống**</h1>
 
 Linux có khá nhiều dạng file hệ thống, và mỗi loại sẽ được áp dụng với từng mục đích riêng biệt. Điều này không có nghĩa rằng những file hệ thống này không thể được áp dụng trong trường hợp khác, mà tùy theo nhu cầu, mục đích của người sử dụng, chúng ta sẽ đưa ra phương án phù hợp. Dưới đây là danh sách các filesystem phổ biến:
 - **Minix**: là hệ thống lâu đời nhất và được cho là đáng tin cậy nhất, nhưng nó khá hạn chế về các tính năng (một số nhãn thời gian – time stamp bị thiếu, tối đa 30 kí tự / tệp tin)
@@ -36,7 +36,7 @@ Linux có khá nhiều dạng file hệ thống, và mỗi loại sẽ được 
 - **JFS**: được phát triển bởi IBM năm 1990, sau đó chuyển sang Linux. Điểm mạnh rất dễ nhận thấy của JFS là tiêu tốn rất ít tài nguyên hệ thống, đạt hiệu suất hoạt động tốt với nhiều file dung lượng lớn, nhỏ khác nhau. Các phân vùng JFS có thể thay đổi kích thước được nhưng lại không thể shrink như ReiserFS và XFS, tuy nhiên, nó lại có tốc độ kiểm tra ổ đĩa nhanh nhất so với các phiên bản Ext.
 - **Swap**: đây không thực sự là 1 dạng file hệ thống, bởi vì cơ chế hoạt động khá khác biệt, được sử dụng dưới 1 dạng bộ nhớ ảo và không có cấu trúc file hệ thống cụ thể. Không thể kết hợp và đọc dữ liệu được, nhưng lại chỉ có thể được dùng bởi kernel để ghi thay đổi vào ổ cứng. Thông thường, nó chỉ được sử dụng khi hệ thống thiếu hụt ram hoặc chuyển trạng thái của máy tính sang chế độ Hibernate.
 
-**3. Filesystem Hierarchy Standard (FHS)**
+<h1>**3. Filesystem Hierarchy Standard (FHS)**</h1>
 
 Filesystem của hệ điều hành Linux được tổ chức theo tiêu chuẩn cấp bậc của hệ thống tập tin Filesystem Hierarchy Standard (FHS). Tiêu chuẩn này định nghĩa mục đích của mỗi thư mục.
  
@@ -65,7 +65,7 @@ Chức năng của các thư mục:
 - **/root**: các tệp cá nhân của người quản trị (root account)
 - **/proc**: sử dụng cho nhân Linux, chúng được sử dụng bởi kernel để xuất dữ liệu sang không gian người dùng.
 
-**4. Các lệnh hiển thị kiểu filesystem trong Linux**
+<h1>**4. Các lệnh hiển thị kiểu filesystem trong Linux**</h1>
 
 - Lệnh ```df```: là viết tắt của Disk Filesystem, cung cấp thông tin sử dụng không gian đĩa của hệ thống tệp của bạn. Sử dụng tùy chọn “-T” với lệnh df để lấy kiểu hệ thống.
 ```
