@@ -82,3 +82,22 @@ Syncing disks.
 datnt@ssivn:~$ sudo partprobe /dev/sdb
 datnt@ssivn:~$
 ```
+
+**3. Xóa phân vùng ổ đĩa trên Linux**
+
+-	Để xóa phân vùng đã có, sử dụng lệnh ```fdisk /partition```, gõ lệnh “d” sau đó chọn phân vùng cần xóa trong ổ đĩa đó.
+
+```
+datnt@webserver:~$ sudo fdisk /dev/sdb
+
+Welcome to fdisk (util-linux 2.31.1).
+Changes will remain in memory only, until you decide to write them.
+Be careful before using the write command.
+
+
+Command (m for help): d
+Selected partition 1
+Partition 1 has been deleted.
+
+Command (m for help):
+```
