@@ -1,0 +1,139 @@
+HỆ ĐIỀU HÀNH LINUX
+SYSTEM LOGGING
+
+I.	Syslog / rsyslog
+-	Log trên hệ thống giống như một quyển nhật ký để lưu giữ lại những event, nhằm mục đích truy vết, troubleshoot khi hệ thống gặp vấn đề.
+-	Syslog là giao thức client/server để chuyển log tới máy nhận log.
+-	Rsyslog là dịch vụ lưu log được cài đặt mặc định trên hầu hết các OS Linux hiện nay.
+-	Các file log quan trọng trên hệ thống khi mới bắt đầu cài đặt OS:
+o	/var/log/message (CentOS) hoặc /var/log/syslog (Ubuntu): Đây là nơi lữu trữ các log, thông báo từ hệ thống. Tại đây chúng ta có thể nhận được hầu hết các thông báo từ hệ thống gửi ra. Sử dụng lệnh “tail –f” để theo dõi log file theo thời gian thực.
+ 
+o	/var/log/secure.log (CentOS) hoặc /var/log/secure.log (Ubuntu): Đây là nơi lưu trữ các thông tin về lịch sử xác thực, chúng ta có thể tìm kiếm lịch sử đăng nhập hệ thống qua SSH hoặc sử dụng quyền Sudo thông qua file này.
+ 
+o	/var/log/wtmp: Đây là nơi lưu trữ log của tất cả các phiên login, logout vào hệ thống.
+ 
+-	Để chỉnh sửa cấu hình của rsyslog, chúng ta cần chỉnh sửa trong file /etc/rsyslog.conf. Với CentOS, file này sẽ chứa cả các quyền về log. Còn trên Ubuntu, để chỉnh sửa quyền, chúng ta cần truy cập /etc/rsyslog.d/50-default.conf
+ 
+-	Trong cấu hình rsyslog, có 2 phần bao gồm: 
+ 
+o	Phần 1: chỉ ra nguồn tạo ra log và mức cảnh báo của log. Phần này bao gồm 2 thành phần, được cách nhau bởi dấu “.”
+o	Phần 2: nơi lưu trữ log. Có 2 loại bao gồm: lưu trữ cục bộ trên máy tính đó hoặc lưu trữ trên syslog server.
+-	Các nguồn tạo ra log:
+o	kernel: log do kernel sinh ra
+o	user: log ghi lại cấp độ người dùng
+o	mail: log của hệ thống mail
+o	daemon: log của các tiến trình trên hệ thống
+o	auth: log từ quá trình đăng nhập hệ thống hoặc xác thực hệ thống
+o	syslog: log từ chương trình syslogd
+o	lpr: log từ quá trình in ấn
+o	cron: log của cron daemon
+o	ftp: log của ftp daemon
+o	ntp: log từ dịch vụ ntp của các sub server
+o	security: kiểm tra đăng nhập
+o	console: log cảnh báo hệ thống
+o	local0 – local7: log dự trữ dùng cho nội bộ.
+-	Các mức cảnh báo của log:
+o	emerg (0): thông báo tình trạng khẩn cấp, hệ thống không sử dụng được
+o	alert (1): hệ thống cần can thiệp ngay, một điều kiện cần fix ngay lập tức, ví dụ như CSDL bị hỏng
+o	crit (2): lỗi thiết bị phần cứng
+o	err (3): thông báo lỗi hệ thống
+o	warn (4): đưa ra cảnh báo với hệ thống
+o	notice (5): đưa ra thông báo với hệ thống (không phải lỗi)
+o	info (6): đưa ra thông báo thông tin
+o	debug (7): thông báo xuất hiện với khi gỡ lỗi một chương trình
+o	none: không ghi log
+-	Nếu muốn lưu log với dịch vụ mail với mức cảnh báo info trở lên (mức 6 tới 0), khai báo phần 1 là “mail.info”
+ 
+-	Nếu muốn lưu log chỉ với mức cảnh báo info, khai báo “mail.=info”
+ 
+-	Nếu muốn lưu tất cả các log trừ log info, khai báo “mail.!info”
+ 
+-	Lưu tất cả các log của mail, khai báo “mail.*”
+ 
+-	Để đọc file log, chúng ta có 3 lựa chọn:
+o	“vi” / “cat”: sử dụng trình soạn thảo để hiển thị nội dung
+o	“tail”: nếu muốn hiển thị những gì ghi trong file log theo thời gian thực, sử dụng lệnh “tail –f”
+o	“grep”: tìm kiếm chính xác từ khóa có trong file log với cú pháp “grep “content” file.log”
+II.	Lưu log tập trung
+-	Mỗi máy Linux có bộ lưu trữ nhật ký cục bộ riêng nên khó khăn trong việc kiểm soát log cũng như truy vết khi cần thiết. Do đó, chúng ta cần phải có một hệ thống lưu log tập trung để quản lý log.
+-	Cấu hình log tập trung: trên syslog server, chỉnh sửa file /etc/rsyslog.conf, bỏ “#” ở 2 dòng module và input. Rsyslog hỗ trợ cả TCP và UDP trong việc lưu log, vì vậy chúng ta có thể lựa chọn sử dụng UDP hoặc TCP, hoặc cả 2 để lưu log.
+ 
+-	Để máy chủ log tạo thành các thư mục riêng với từng máy client, thêm dòng phía dưới vào cuối file cấu hình (lưu folder theo hostname client, nếu muốn lưu tên folder theo IP, thay HOSTNAME = fromhost-ip):
+-	$template RemoteServer, "/var/log/%HOSTNAME%/%SYSLOGFACILITY-TEXT%.log"
+-	*.* ?RemoteServer
+-	Mở port 514:
+ 
+-	Reload service rsyslog
+-	Trên các máy client, cần khai báo IP server, thêm dòng lệnh “*.* @@IPSERVER:514” ở dưới phần RULES. Sử dụng @ nếu giao thức kết nối là UDP, @@ nếu giao thức kết nối là TCP.
+ 
+-	Sau đó khởi động lại rsyslog service.
+-	Để kiểm tra log, chúng ta sử dụng lệnh “tcpdump –nni ens33 port 514” trong đó ens33 là network interface
+-	Khi có logs từ các máy client, hệ thống sẽ tự tạo folder tương ứng với tên client để lưu trữ trong thư mục /var/log. Ở ví dụ trên, máy client là CentOS 7 và có hostname là localhost, trong /var/log sẽ thấy thư mục tương ứng:
+ 
+III.	Logger command
+-	Logger là câu lệnh hữu ích để xử lý việc ghi nhật ký hệ thống. Chúng ta có thể kiểm tra bất kỳ lúc nào việc ghi log vào hệ thống có chạy đúng hay không
+-	Cú pháp của logger:
+logger OPTION LOG
+-	Trong đó: 
+o	OPTION: chúng ta có các option phổ biến sau:
+	-f: ghi lại nội dung của file đó vào nhật ký
+	-p: ghi lại tin nhắn với độ ưu tiên được khai báo.
+	--size: dung lượng tối đa cho một tin nhắn. ví dụ nếu khai báo –size 10: nội dung tin nhắn đó chỉ được phép tối đa 10 ký tự, các ký tự vượt quá 10 sẽ không được lưu.
+	-T: sử dụng chỉ với giao thức TCP
+	-d: sử dụng chỉ với giao thức UDP
+	–n: khai báo IP của log server (trong trường hợp lưu log tập trung)
+	-h: hiển thị các option của câu lệnh logger.
+o	LOG: nội dung muốn ghi vào nhật ký
+-	Mặc định, tin nhắn được lưu log với độ ưu tiên “user.notice”, nếu muốn thay đổi, sử dụng lệnh “logger –p “priority” “MSG””. Ví dụ, muốn lưu lại với độ ưu tiên “local3.info”:
+ 
+IV.	Logrorate
+-	Logrotate là một công cụ giúp đơn giản hóa công việc quản lý log trên hệ thống. Nó quản lý log theo cơ chế xoay vòng file log. Logrotate tự tạo ra các file log mới theo thời gian, dung lượng,… Các file log cũ sẽ được nén/xóa/di chuyển theo cấu hình trước đó. Nó hoạt động một cách tự động nên không cần phải can thiệp thủ công.
+-	Mặc định cấu hình logrotate tại /etc/logrotate.conf. Tại đây chứa các thông tin thiết lập toàn bộ file log mà logrotate quản lý, bao gồm chu kì lặp, dung lượng file log, nén file log,…
+-	Trên linux, logrotate chạy theo lịch cron hàng ngày nên script chạy logrotate sẽ lưu tại /etc/cron.daily
+-	Để cấu hình logrotate cho từng dịch vụ, chúng ta cần phải tạo file trong /etc/logrorate.d/. Ví dụ tạo logrotate cho  dịch vụ sshd:
+ 
+-	Các từ khóa phổ biến khai báo trong dấu { } bao gồm:
+o	daily: mỗi ngày
+o	weekly: mỗi tuần
+o	monthly: mỗi tháng
+o	yearly: mỗi năm
+o	missingok: nếu file log bị mất hoặc không tồn tại .log thì logrotate sẽ di chuyển tới phần cấu hình log của file log khác mà không xuất ra thông báo lỗi
+o	nomissingok: ngược lại với missingok
+o	notifempty: không rotate nếu file log này trống
+o	rotate: số lượng file log cũ được giữ lại
+o	compress: logrotate sẽ nén tất cả các file log lại sau khi đã được rotate, mặc định sử dụng gzip.
+o	nocompress: không sử dụng tính năng nén đối với file log cũ
+o	delaycompress: hoãn việc nén file log tới lần rotate tiếp theo
+o	create: phân quyền cho file log mới sau khi rotate, nếu không khai báo thì file log mới sẽ không được tạo (nếu cả trong /etc/logrotate.conf cũng không khai báo)
+o	Logrotate hỗ trợ chạy các tập lệnh trước và sau khi rotate nhằm đảm bảo các tác vụ thường xuyên khi rotate được chạy.
+	postrotate [command] endscript: chạy tập lệnh ngay sau khi rotate xong. Tập lệnh thường được sử dụng để khởi động lại ứng dụng sau khi rotate để ứng dụng có thể chuyển sang log mới, script được chạy mỗi khi rotate một bản ghi.
+	sharescripts: câu lệnh này chỉ định nhằm mục đích cho câu lệnh trong postrotate chạy sau cùng khi các rotate trong cùng 1 block hoàn thành. Như vậy sẽ giảm thời gian chạy câu lệnh trong postrotate.
+	prerotate [command] endscript: để chạy lệnh trước khi quá trình rotate bắt đầu, đặt lệnh thực thi giữa prerotate và endscript.
+-	Để kiểm tra file logrotate đã cấu hình đúng hay chưa, sử dụng câu lệnh “logrotate –d filename”, nó sẽ đưa chúng ta vào chế độ debug, một mô tả chi tiết về cách thức hoạt động của file sẽ được hiển thị.
+ 
+-	Logrotate lỗi:
+ 
+V.	Jounarlctl
+-	Với các hệ điều hành đang sử dụng systemd, chúng ta có một phương pháp khác để quản lý log.
+-	File cấu hình của journalctl được lưu tại /etc/systemd/journald.conf
+-	Juornal lưu trữ file log ở định dạng mã nhị phân tại /var/log/journal
+-	Câu lệnh cơ bản để xem log là “journalctl”, nó sẽ hiển thị log theo trình từ từ cũ nhất tới mới nhất từ trên xuống dưới. Với các hệ thống sử dụng lâu, việc sử dụng câu lệnh này để kiểm tra log là điều bất tiện
+ 
+-	File log lưu trữ rất nhiều thông tin về tiến trình, dịch vụ, có những log chỉ là thông báo, không phải là lỗi nên không quan tâm, chúng ta có thể lọc file log hiển thị theo các mức cảnh báo để dễ dàng truy vấn hơn với câu lệnh “journalctl –p number” trong đó, number là mã mức cảnh báo (từ 0 – 6)
+ 
+-	Để xem danh sách các lần hệ thống khởi động, chúng ta có thể sử dụng lệnh “journalctl –list-boots”. Trong đó:
+o	Cột 1: Boot Track Number của lần boot
+o	Cột 2: Boot ID
+o	Cột 3: thời gian boot
+ 
+-	Để xem nội dung chi tiết của một lần boot, sử dụng lệnh “journalctl –b Boot Track Number” hoặc “journalctl –b Boot ID”
+ 
+-	Để xem log trong một khoảng thời gian cụ thể, sử dụng “journalctl –since TIME” trong đó, TIME có thể khai báo: “yesterday”, “today”, “now” hoặc thời gian cụ thể với định dạng: YYYY-MM-DD HH:MM:SS
+ 
+-	Chúng ta cũng có thể xem log cho từng dịch vụ với câu lệnh “journalctl –u ServiceName”. Nếu như chưa biết tên service, sử dụng lệnh “systemctl list-units –type=service”
+ 
+-	Nếu muốn xem log theo đường dẫn thực thi của một chương trình, sử dụng câu lệnh: “journalctl /locationfile”
+ 
+-	Ví dụ: tạo 1 service example chạy chương trình example.sh in ra màn hình “helloworld” mỗi 4s một lần, kiểm tra log của file thực thi của dịch vụ example với câu lệnh “journalctl /usr/sbin/example.sh”
+ 
+
