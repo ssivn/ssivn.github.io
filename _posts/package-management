@@ -1,0 +1,149 @@
+PART 3. PACKAGE MANAGEMENT
+
+I.	Trình quản lý gói
+-	Trình quản lý gói là tập hợp những công cụ, phần mềm tự động hóa quá trình cài đặt, cấu hình, cập nhật và xóa của một phần mềm trên hệ điều hành Linux.
+-	Với mỗi bản distro Linux đều có những trình quản lý gói cài đặt riêng dành cho mình, cho nên khi cài đặt ứng dụng cho Linux chúng ta cần phải xem xét kỹ ứng dụng đó sử dụng trình quản lý gói gì, hệ điều hành có đáp ứng không.
+-	Hai công cụ quản lý gói chính của Linux gồm: RPM và Debian (DEB), chúng ta có thể dễ dàng chuyển đổi gói tin từ RPM sang DEB với công cụ Ailen
+1.	RPM (RedHat Package Manager)
+-	RPM là trình quản lý gói được Redhat ban đầu phát triển riêng, nhưng sau đó, hãng đã phát hành phần mềm theo giấy phép công cộng (GPL) để người khác có thể tự do sử dụng nó trong các bản phân phối của riêng họ.
+-	RPM hỗ trợ cấu hình, cài đặt, nâng cấp, gỡ bỏ các gói nhưng có một hạn chế đó là không tự động update, cài đặt các gói bị thiếu từ internet được.
+-	Quy ước đặt tên của gói RPM:
+packagename-a.b.c-x.arch.rpm
+o	packagename: tên của gói cài đặt. Ví dụ: firefox
+o	a.b.c: số phiên bản, là phiên bản của gói được phát hành. Ví dụ: 84.0.2
+o	x: theo sau số phiên bản, số này đại diện cho những thay đổi nhỏ được thực hiện bởi người bảo trì gói, không phải tác giả của chương trình. Những thay đổi này có thể là các bản vá được thêm vào chương trình gốc để sửa lỗi hoặc để làm cho chương trình tương thích hơn với các bản phân phối Linux đích. Trong nhiều bản phát hành cũng sử dụng các ký tự để thể hiện nó. Ví dụ: fc34
+o	arch: thành phần cuối cùng đứng trước phần mở rộng .rpm là mã cho kiến trúc của gói. Ví dụ như với x86_64 thể hiện gói này hỗ trợ cài trên các máy Intel 64bit.
+ 
+-	Trên Linux, câu lệnh chính để cài đặt, nâng cấp các gói trên shell là “rpm”. Nó có cấu trúc:
+rpm   [operation] [option]   [package file]
+-	Operation là các hành động với file .rpm. Các operation phổ biến:
+o	-i: cài đặt một gói, hệ thống phải xác nhận chưa có gói tin nào có tên tương tự
+o	-U: cài đặt một gói mới hoặc nâng cấp 1 gói đã có sẵn
+o	-F: chỉ dùng để nâng cấp gói nếu phiên bản cũ hơn đã tồn tại
+o	-q: truy vấn một gói – tìm thông tin gói đó đã được cài đặt chưa, thông tin gói là gì
+o	-v: xác minh gói – kiểm tra xem gói đó đã được cài đặt chưa và có thay đổi gì từ lúc cài đặt không
+o	-e: gỡ cài đặt 1 gói
+o	--rebuilddb: xây dựng lại cơ sở dữ liệu của gói RPM để fix lỗi.
+2.	Dpkg
+-	dpkg là trình quản lý gói tin cấp thấp, nó là nền tảng cho các trình quản lý gói tin trên các hệ điều hành Debian. Dpkg được sử dụng để cài đặt, gỡ bỏ và cung cấp các thông tin về gói .deb
+-	Giống với rpm, để sử dụng dpkg cài đặt một gói thì gói đó cũng phải đang có trong local, dpkg không hỗ trợ cài đặt gói qua internet
+-	Cấu trúc của dpkg:
+dpkg [option] [action] [packagefie | packagename]
+-	Các action chính của dpkg:
+o	-i: cài đặt một gói
+o	-r: xóa một gói
+o	-P: xóa 1 gói bao gồm cả các file cấu hình
+o	--configure: cấu hình lại gói đã cài đặt
+o	-I: hiển thị thông tin về một gói đã gỡ
+o	-p: hiển thị thông tin về một gói đã cài đặt
+3.	APT (Advanced Package Tool)
+-	APT là trình quản lý gói phổ biến trên Ubuntu, Debian và các hệ điều hành phát triển dựa trên Debian. Viết tắt của: Advanced Package Tool. Nó được phát triển dựa trên dpkg
+-	APT có 2 công cụ để quản lý, cài đặt package: apt-get (apt) và apt-cache
+3.1	apt-get hoặc apt: 
+-	Sử dụng nhằm mục đích cài đặt các gói phần mềm mới, xóa và nâng cấp các gói phần mềm hiện có, thậm chí nó còn được dùng để nâng cấp toàn bộ hệ điều hành.
+-	Với apt-get, apt, chúng ta có thể cài đặt các gói một cách dễ dàng, đặc biệt nếu bạn có internet, nó sẽ hỗ trợ tải các gói còn thiếu và cài đặt vào hệ thống, không phải làm thủ công như rpm.
+3.2	apt-cache: 
+-	Được sử dụng để tìm kiếm các gói phần mềm, thu thập thông tin của các gói và tìm kiếm những gói có sẵn trên hệ thống.
+II.	Querying installed packages
+1.	Lệnh truy vấn với rpm
+-	Để hiển thị các gói đã được cài đặt trên hệ thống với gói “rpm”, chúng ta sử dụng lệnh “rpm –qa” để liệt kê, trong đó:
+o	-q: dùng để truy vấn
+o	-a: hiển thị tất cả các gói tin đã cài đặt
+ 
+-	Hiển thị những package cài đặt gần đây nhất và thời gian cài, sử dụng lệnh “rpm –qa –last”
+ 
+-	Để thể hiện chi tiết thông tin 1 package, chúng ta sử dụng lệnh “rpm –qi packagename”. Trong ví dụ này, show chi tiết package python
+ 
+-	Nếu chỉ muốn tìm kiếm tên của một gói đã cài đặt, sử dụng lệnh “rpm –q packagename”
+ 
+2.	Lệnh truy vấn với dpkg
+-	Hiển thị tất cả các gói đã cài đặt, sử dụng lệnh “dpkg –l”
+ 
+-	Hiển thị thông tin của một gói, sử dụng lệnh “dpkg –l packagename”
+ 
+-	Để tìm kiếm chi tiêt thông tin của một gói: tên, trạng thái, dung lượng, kiến trúc,…, sử dụng lệnh “dpkg –search packagename”
+ 
+3.	Lệnh truy vấn với apt
+-	Để liệt kê tất cả các gói đã cài đặt, sử dụng lệnh “apt-cache pkgnames”
+ 
+-	Tìm kiếm thông tin về một gói cài đặt, sử dụng lệnh “apt-cache search packagename”
+ 
+-	Nếu muốn tìm thông tin các gói có cùng tên bắt đầu, ví dụ tìm kiếm các gói có tên bắt đầu là vsftpd: “apt-cache pkgnames vsftpd”
+ 
+-	Cũng có thể tìm kiếm thông tin chi tiết về một package, với các thông số như: tên gọi, kiến trúc, phiên bản, dung lượng,… với lệnh “apt-cache show packagename”
+ 
+
+III.	Installing a package
+1.	Cài đặt 1 package với rpm
+-	Để cài đặt được package với định dạng .rpm, file đó phải có trong local của hệ thống. Vì thế, cần phải sử dụng trình duyệt dể donwload file .rpm về hoặc nếu không có trình duyệt, chúng ta sẽ sử dụng “wget” để download .rpm.
+-	Nếu máy chưa có sẵn “wget”, có thể cài đặt với lệnh “sudo yum install wget” (CentOS)
+-	Để download được file .rpm về máy với command “wget”, chúng ta sử dụng: “wget linkdownload.rpm”. Trong ví dụ này, tôi download file samba về máy.
+ 
+-	Sau khi đã có file cài đặt ở máy local, sử dụng lệnh “sudo rpm –i packagename.rpm” để cài đặt.
+-	Nếu bạn muốn hiển thị quá trình cài đặt, có thể thêm các tham số -vh vào sau –i để hiển thị quá trình cài đặt. Câu lệnh: “sudo rpm –ivh packagename.rpm”. Trong đó:
+o	-h: hiển thị dấu (#) để cho biết quá trình cài đặt diễn ra
+o	-v: được sử dụng kèm –h để thể hiện % giữa các thông số được đồng nhất.
+-	Bạn cũng có thể sử dụng –U để cài đặt một gói tin, với câu lệnh: “sudo rpm –U packagename.rpm” hoặc “sudo rpm –Uvh packagename.rpm”
+2.	Cài đặt 1 package với dpkg
+-	Để cài đặt một gói dpkg, sử dụng lệnh “dpkg -i  packagefile.deb” và package này phải có trên local
+3.	Cài đặt 1 package với apt
+-	Để cài đặt 1 gói với apt, sử dụng lệnh “sudo apt install packagename”. Trong ví dụ dưới, đang cài đặt samba
+ 
+-	Theo mặc định, lệnh sudo apt install sẽ bắt chúng ta nhập lệnh để chấp nhận hoặc từ chối cài gói tin. Nếu bạn đồng ý tất cả, gõ –y sau install để hệ thống không phải hỏi lại nữa.
+-	Chúng ta cũng có thể cài đặt nhiều package khác nhau với lệnh apt với cú pháp: “sudo apt install <package1> <package2>”
+-	Nếu bạn muốn cài 1 package nhưng không muốn cài version cao nhất hiện có, có thể gõ version mình muốn cài với dòng lệnh: “sudo apt install packagename=version”
+IV.	The upgrade mechanism
+1.	Cơ chế update gói (RPM)
+-	Để có thể cập nhật các gói trên RPM, chúng ta sử dụng lệnh “rpm –U packagefile.rpm”. Và gói này cũng phải được chứa trong local của hệ thống.
+2.	Cơ chế update gói (dpkg)
+-	Để cập nhật một gói trong Debian với dpkg, chúng ta cũng sẽ sử dụng lệnh “dpkg -i packagefile.deb”. Nếu quá trình nâng cấp bị lỗi, tức là gói đó không phải là gói nâng cấp mà là một bộ cài hoàn chỉnh hoặc một gói nâng cấp từ nguồn khác.
+3.	Cơ chế update gói (APT)
+-	Để cập nhật danh sách những package có bản update mới, sử dụng lệnh “sudo apt-get update”. Ở mỗi dòng sẽ có 1 từ với ý nghĩa:
+o	Hit: không có cập nhật
+o	Ign: có một gói tin bị bỏ qua
+o	Get: Có bản cập nhật phiên bản mới. Dung lượng của nó được ghi sau cùng (tính theo kb)
+ 
+-	Hiển thị những package có bản cập nhật với câu lệnh “sudo apt list –upgradable”
+ 
+-	Hoặc có thể kiểm tra cập nhật của một gói bất kỳ với câu lệnh “apt list –upgradable | egrep packagename”
+ 
+-	Để cập nhật toàn bộ các package có bản update, sử dụng lệnh “apt-get upgrade”
+-	Hoặc nếu chỉ muốn cập nhật một package, sử dụng lệnh “apt-get --only-upgrade install packagename”
+ 
+4.	/etc/apt/source.list
+-	Ngoài ra với các hệ điều hành Debian, các bản cập nhật của hệ thống còn được quản lý thông qua 1 file /etc/apt/source.list. Hệ thống sẽ cập nhật các gói quan trọng thông qua các nguồn lưu trữ được liệt kê trong file này. Vì thế file này rất quan trọng trong hệ thống, chỉ thêm các trang web mà bạn tin tưởng và tin cậy nó. Nếu không may một nguồn thêm vào đây có chứa các chương trình không đáng tin cậy hoặc có lỗ hổng bảo mật, hệ thống này sẽ rất dễ bị tấn công sau khi update qua apt-get.
+ 
+-	Cú pháp để khai báo nguồn lưu trữ:
+deb uri distribution [component]
+deb-src uri distribution [component]
+-	Trong đó:
+o	deb: chỉ nguồn địa chỉ web chỉ để download chương trình binary
+o	deb-src: khai báo nguồn download source của chương trình
+o	uri: khai báo địa chỉ web của server repository. Thông thường các repository sẽ phân cấp theo folder OS tương ứng để dễ quản lý và phân loại (ví dụ: http://domain.com/ubuntu hay http://domain.com/debian )
+o	distribution: code name của hệ điều hành (ví dụ: ubuntu 16.04 tên gọi là xenial, distribution sẽ là xenial)
+o	component: các thành phần của repository, có 4 loại bao gồm:
+	main: chương trình miễn phí và mã nguồn mở từ Ubuntu
+	universe: chương trình miễn phí và mã nguồn mở từ cộng đồng duy trì
+	restricted: cung cấp driver cho thiết bị
+	mutiverse: một số chương trình được giới hạn bởi vấn đề bản quyền
+
+V.	Removing package
+1.	Gỡ bỏ gói (rpm)
+-	Để gỡ bỏ một gói tin rpm, chúng ta sử dụng lệnh “rpm –e”
+ 
+-	Nếu muốn gỡ một gói rpm nhưng không muốn gỡ các gói phụ thuộc, thêm “—nodeps” trước tên gói
+ 
+-	Ngoài ra, nếu chỉ muốn kiểm tra xem câu lệnh có hoạt động không trước khi gỡ, chúng ta có thể sử dụng “--test” để kiểm tra (nó cũng hoạt động với câu lệnh cài đặt hoặc update) 
+2.	Gỡ bỏ gói (dpkg)
+-	Để gỡ bỏ một gói sử dụng dpkg, chúng ta dùng câu lệnh “sudo dpkg –r packagename”
+ 
+-	Để gỡ bỏ gói kèm các tập tin cấu hình, sử dụng lệnh –p (--purge) thay cho –r (--remove)
+ 
+3.	Gỡ bỏ gói (apt)
+-	Để gỡ bỏ gói apt, chúng ta sử dụng lệnh “apt-get remove packagename”
+ 
+-	Chúng ta cũng có thể gỡ nhiều package cùng lúc với câu lệnh “apt-get remove pkg1 pkg2” với mỗi tên package cách nhau 1 space
+-	Với lệnh remove sẽ chỉ gỡ gói cài đặt đó ra, và có thể để lại các tập tin, không sạch hoàn toàn. Nếu muốn xóa package cùng toàn bộ tập tin cấu hình của nó, sử dụng lệnh “purge” thay cho “remove”
+ 
+-	Bất cứ khi nào cài đặt một gói lên hệ thống sẽ có đi kèm một vài package phụ thuộc được cài theo. Sau khi package cài đặt được gỡ ra thì các package phụ thuộc sẽ vẫn còn trên hệ thống và không sử dụng tới. Chúng ta có thể gỡ bỏ nó với câu lệnh “autoremove”
+ 
