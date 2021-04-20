@@ -1,0 +1,126 @@
+HỆ ĐIỀU HÀNH LINUX
+PROCESS MONITORING AND SCHEDULING
+
+
+I.	MONITORING PROCESS
+-	Việc giám sát các tiến trình của hệ thống Linux nhằm mục đích tối ưu hóa hiệu năng cũng như debug là rất quan trọng.
+1.	Lệnh “top”
+-	“top” được sử dụng trong rất nhiều các hệ điều hành Linux phổ biến hiện nay để giám sát quá trình hoạt động của Linux, nó giám sát hệ thống theo thời gian thực (real-time)
+ 
+-	Dòng đầu tiên bao gồm:
+o	17:06:18: thời gian hiện tại của hệ thống
+o	Up 7:10: thời gian online của hệ thống, ở đây đang online 7h10’
+o	1 user: số lượng người dùng đang online, hiện tại đang có 1 user
+o	Load average: tải trung bình CPU của hệ thống, từ các phút 1, 5 và 15 
+ 
+-	Dòng thứ 2: liên quan tới các tác vụ
+o	165 total: tổng các process đang ở chế độ active
+o	1 running: các process đang chạy
+o	88 sleepping: các process đang ở chế độ ngủ (chờ)
+o	0 stopped: các process đang dừng
+o	0 zombie: các process đang chờ dừng từ các process khác
+ 
+-	Dòng thứ 3: liên quan tới CPU hệ thống, được tính theo %
+o	0.0 us: dung lượng CPU sử dụng bởi người dùng
+o	0.2 sy: dung lượng CPU sử dụng bởi hệ thống
+o	0.0 ni: dung lượng CPU sử dụng bởi các process có ưu tiên thấp
+o	99.8 id: dung lượng CPU không sử dụng
+o	0.0 wa: dung lượng CPU sử dụng cho quá trình chờ đợi các hoạt động Input/Output disk
+o	0.0 hi: dung lượng CPU được sử dụng do phần cứng bị gián đoạn
+o	0.0 si: dung lượng CPU được sử dụng do phần mềm bị gián đoạn
+o	0.0 st: dung lượng CPU bị chuyển từ máy ảo này cho các tác vụ khác. Số này bằng 0 nếu như hệ thống không có máy ảo.
+ 
+-	Dòng 4 và dòng 5: hiển thị thông số RAM và swap (ram ảo – được sử dụng khi RAM vật lý quá tải).
+o	Total: tổng dung lượng ram /  swap
+o	Free: dung lượng RAM /swap còn trống
+o	Used: dung lượng RAM / swap đang sử dụng
+o	Buff/cache: dung lượng bộ đệm
+ 
+-	Tiếp đến, cột dưới cùng sẽ cho chúng ta biết được các process nào sử dụng CPU trong thời gian hiện tại (real-time). Ý nghĩa của các cột:
+o	PID: Process ID – ID của tiến trình
+o	USER: người đang sử dụng tiến trình này
+o	PR: mức độ ưu tiên của tiến trình
+o	NI: giá trị “NICE” của tiến trình, giá trị từ -20 tới 19, giá trị càng thấp, độ ưu tiên càng cao
+o	VIRT: bộ nhớ ảo được dùng bởi tiến trình
+o	RES: bộ nhớ vật lý được dùng bởi tiến trình
+o	SHR: dung lượng được chia sẻ dùng bởi tiến trình
+o	S: trạng thái của quá trình: S=sleep, R=running, Z=zombie, I= Idle
+o	%CPU: phần trăm CPU được sử dụng bởi tiến trình
+o	%MEM: phần trăm RAM được sử dụng bởi tiến trình
+o	TIME+: tổng thời gian CPU được sử dụng bởi tiến trình
+o	COMMAND: tên của tiến trình
+ 
+
+2.	Lệnh “ps”
+-	Ngoài ra, có thể sử dụng lệnh “ps” để kiểm tra, giám sát chi tiết hơn.
+-	Lệnh “ps –ef” để hiển thị tất cả các tiến trình đang chạy:
+ 
+-	Trong đó, ý nghĩa của các cột bao gồm:
+o	UID: user khởi chạy tiến trình
+o	PID: ID của tiến trình
+o	PPID: ID của tiến trình cha (nếu PID bắt đầu bởi một tiến trình khác)
+o	C: 
+o	STIME: thời gian của hệ thống bắt đầu chạy tiến trình
+o	TTY: thiết bị đầu cuối mà từ đó tiến trình được khởi chạy
+o	TIME: thời gian CPU cần thiết để khởi chạy tiến trình
+o	CMD: tên tiến trình
+-	Lệnh “ps –e –u Username” để hiển thị các tiến trình chạy bởi Username
+ 
+-	Lệnh “ps –C process_name” để lọc kết quả theo tên process
+ 
+-	Để tìm kiếm các thông tin process theo từ khóa, sử dụng câu lệnh “ps –ef | grep “keyword”
+ 
+-	Nếu muốn hiển thị một vài cột cụ thể thay vì hiển thị toàn bộ các cột, sử dụng lệnh “ps –e –o columnname”
+ 
+-	Nếu muốn hiển thị các process theo dạng cây thư mục. Sử dụng lệnh “ps –e --forest”.
+ 
+-	Lọc kết quả theo PID:
+ 
+-	Hiển thị tên process khi có PID:
+ 
+-	Ngược lại, hiển thị PID khi biết tên của process:
+ 
+
+
+II.	SCHEDULING PROCESS WITH CRON
+-	Cron là một công cụ để cấu hình các tác vụ đã lên lịch trên hệ thống Linux, Unix. Nó được sử dụng để lập lịch các lệnh hoặc tập lệnh chạy theo định kỳ và theo khoảng thời gian cố định.
+-	Các nhiệm vụ bao gồm từ: sao lưu các thư mục chính của người dùng vào thời gian nhất định đến ghi các thông tin về CPU hàng ngày, hàng giờ.
+-	Để chỉnh sửa hoặc thêm một task, sử dụng lệnh “crontab –e”. Sau khi vào trong, sẽ cần phải lựa chọn trình soạn thảo để chỉnh sửa. Mặc định sẽ là trình soạn thảo nano.
+ 
+-	Giao diện ban đầu khi mở file:
+ 
+-	Để thêm một task mới, sẽ phải khai báo theo định dạng:
+[m] [h] [dom] [mon] [dow] [command]
+-	Trong đó:
+o	m: phút (0-59)
+o	h: giờ (0-23)
+o	dom: day of month – ngày của tháng (1-31)
+o	mon: month – tháng (1-12)
+o	dow: day of week: ngày của tuần (0-7, trong đó: 0-6 = Chủ nhật – thứ 7, 7=Chủ Nhật=0)
+o	command: lệnh sẽ thực thi
+-	Ví dụ: đặt lệnh vào lúc 23:30 ngày 25 hàng tháng sẽ chạy lệnh backup.sh:
+ 
+-	Ngoài ra, chúng ta cũng có thể sử dụng những từ khóa đặc biệt thay vì phải khai báo chi tiết như:
+o	@reboot: chạy task một lần mỗi khi khởi động lại
+o	@yearly / @annually: chạy mỗi năm một lần, tương tự với việc nhập “0 0 1 1 *”
+o	@monthly: chạy task mỗi tháng một lần – tương tự với việc nhập “0 0 1 * *”
+o	@weekly: chạy task mỗi tuần 1 lần – “0 0 * * 0”
+o	@daily / @midnight: chạy task mỗi ngày một lần – “0 0 * * *”
+o	@hourly: chạy task mỗi giờ một lần – “0 * * * *”
+ 
+-	Để hiển thị các task đã cấu hình, sử dụng lệnh “crontab –l”
+ 
+-	Nếu muốn thay đổi trình soạn thảo của crontab từ nano sang vim, sử dụng lệnh “EDITOR=vim crontab –e”
+III.	CRONTAB COMMAND OPTION
+-	Crontab có cú pháp:
+crontab [-u user] [-l | -r | -e] [-i]
+-	Trong đó:
+o	-u: chỉ định user có crontab sẽ được sử dụng hoặc được sửa đổi. Nếu thành phần này không được liệt kê, mặc định crontab sẽ kiểm tra crontab của user đang đăng nhập hệ thống và truy cập crontab.
+o	-l: hiển thị crontab hiện tại
+o	-r: xóa crontab hiện tại
+o	-e: sửa crontab hiện tại
+o	-i: giống với –r nhưng cần người dùng phải lựa chọn yes/no trước khi xóa
+-	Ngoài ra, có một cú pháp khác:
+crontab [-u user] [file]
+-	file: tải cấu hình crontab từ một tệp được chỉ định.
+ 
