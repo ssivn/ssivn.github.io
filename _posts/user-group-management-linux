@@ -1,0 +1,225 @@
+HỆ ĐIỀU HÀNH LINUX
+
+I.	USER ACCOUNT MANAGEMENT
+1.	Files used in creating a user
+-	Có 4 file chính quản lý người sử dụng trên Linux: /etc/passwd, /etc/shadow, /etc/group, /etc/gshadow.
+1.1	/etc/passwd: 
+-	Là file text chứa thông tin tài khoản của tất cả người dùng trên hệ thống. Ngoài việc lưu trữ thông tin, nó còn lưu trữ các quyền của user, ID của user,… Thông thường các user sẽ chỉ có quyền read với file này, trừ tài khoản root có quyền write
+ 
+-	Cấu trúc các trường trong file /etc/passwd (mỗi trường cách nhau bởi dấu “:” )
+-	datnt: là tên của tài khoản
+-	x: nội dung này thông báo rằng mật khẩu đã được mã hóa và lưu trong file /etc/shadow
+-	1000: User ID
+-	1000: Group ID
+-	Ngo Tien Dat: Mô tả ngắn về user (có thể bỏ trống)
+-	/home/datnt: thư mục chính của tài khoản trên hệ thống
+-	/bin/bash: quyền  
+
+1.2	/etc/shadow: lưu trữ thông tin mật khẩu đăng nhập của người dùng hệ thống. Chỉ có tài khoản root hoặc tài khoản có quyền sudo mới có quyền truy cập file.
+ 
+-	Các trường trong /etc/shadow được phân cách với nhau bởi dấu “:”, với các thông tin:
+o	Trường đầu tiên là username
+o	Trường thứ 2 là mật khẩu đã được mã hóa, nó có thể bắt đầu bằng ký tự “$”, khi đó, ký tự tiếp theo sẽ là thuật toán mã hóa áp dụng cho mật khẩu, cụ thể: 
+	$1 = MD5
+	$2 = Blowfish Algorihm
+	$2a = eksblowfish algorithm
+	$5 = SHA-256
+	$6 = SHA-512
+o	Trường thứ 3: khoảng thời gian (tính bằng ngày) từ 1/1/1970 cho tới lần đổi mật khẩu gần nhất
+o	Trường thứ 4: là thời gian tối đa còn lại để cho phép người dùng đổi mật khẩu, nếu là 0 thì người dùng có thể đổi mật khẩu bất cứ khi nào.
+o	Trường thứ 5: thời gian hiệu lực tối đa của mật khẩu (ngày hết hạn mật khẩu), nếu là 99999 có nghĩa là vô hạn.
+o	Trường thứ 6: là khoảng thời gian trước khi mật khẩu hết hạn, hệ thống sẽ cảnh báo cho người dùng. Ví dụ ở trên đang là số 7: tức là trước khi hết hạn 7 ngày, hệ thống sẽ cảnh báo
+o	Trường thứ 7: khoảng thời gian mà tài khoản đã hết hạn đăng nhập, ví dụ nếu như trường này là 2, nghĩa là tài khoản đã hết hạn đăng nhập 2 ngày.
+o	Trường thứ 8: khoảng thời gian mà tài khoản hết hạn đăng nhập tính từ 1/1/1970 (tính bằng ngày)
+-	Ngoài ra, trường mật khẩu còn chứa một vài ký tự đặc biệt:
+-	Nếu trường password rỗng: tức là người dùng không có mật khẩu đăng nhập
+-	Nếu trường password là “!”: đăng nhập bằng mật khẩu của người dùng bị chặn, nhưng có thể đăng nhập bằng các phương pháp khác (như ssh key)
+-	Nếu trường password là “*LK*” hoặc  “*” tức là tìa khoản bị khóa, không thể đăng nhập bằng mật khẩu, nhưng có thể đăng nhập bằng phương pháp khác.
+1.3	/etc/group: file này giữ thông tin nhóm cho mỗi tài khoản, mọi tài khoản có quyền truy cập và đọc file này, nhưng chỉ có tài khoản root mới có quyền write.
+ 
+-	Mỗi trường của etc/group cũng cách nhau bởi dấu “:”, trong đó:
+-	Trường thứ 1: thông tin tên nhóm
+-	Trường thứ 2: thông báo tình trạng của mật khẩu. Nếu một người dùng không phải trong group nhưng muốn đăng nhập vào sẽ cần phải có mật khẩu này. Nếu là “x” tức là mật khẩu đã được đặt mã hóa, nếu là “!” thì không người dùng nào được phép truy cập nhóm với lệnh “newgrp”. Nếu là “!!” thì cũng tương tự như “!” nhưng còn thêm ý nghĩa là nhóm này chưa đặt mật khẩu lần nào, còn nếu là null (trống) thì tức là chỉ có những thành viên trong nhóm mới đăng nhập vào nhóm được.
+-	Trường thứ 3: Group ID của nhóm
+-	Trường thứ 4: danh sách những user thành viên của nhóm
+1.4	/etc/gshadow: file này giữ các thông tin tài khoản nhóm bảo mật. File này chỉ được phép đọc bởi tài khoản root cũng như user có quyền sudo. Cũng giống như với các file khác, các trường của file /etc/gshadow cách nhau bởi dấu “:”
+ 
+-	Thông tin các trường:
+o	Trường thứ 1: tên nhóm
+o	Trường thứ 2: Mật khẫu đã được mã hóa, tính năng và sử dụng như với /etc/group.
+o	Trường thứ 3: Quản trị viên của nhóm.
+o	Trường thứ 4: các thành viên của nhóm.
+2.	Adding users via the command line
+-	Có 3 kiểu tài khoản trên một hệ thống Linux:
+o	Tài khoản gốc (root account): đây là tài khoản superuser, có quyền cao nhất trên hệ thống. Một superuser có thể chạy bất cứ lệnh nào mà không bị hạn chế.
+o	Các tài khoản hệ thống: các tài khoản hệ thống được tạo riêng cho các dịch vụ, hoạt động riêng của hệ thống như: tài khoản email, sshd,…
+o	Các tài khoản người dùng cá nhân: các tài khoản này cung cấp sự truy cập mang tính tương tác tới hệ thống với người dùng và nhóm sử dụng và thường bị giới hạn truy cập vào các file và thư mục có tính chất quan trọng.
+-	Để tạo một tài khoản sử dụng CLI, chúng ta dùng câu lệnh “useradd newuser”. Sau khi đã tạo tài khoản xong, bạn có thể tạo mật khẩu cho tài khoản bằng lệnh “passwd user”. Trong ví dụ này, tôi tạo tài khoản datnt_vcs:
+ 
+-	Bạn cũng có thể khai báo chi tiết hơn cho tài khoản bằng lệnh sau, với:
+o	-d /home/dat_vcs: xác định thư mục chính cho tài khoản sẽ tạo
+o	-g VCSTEAM: group mà tài khoản sẽ được thêm vào khi tạo
+o	-s /bin/ksh: xác định shell mặc định cho tài khoản
+o	dat_vcs: user id của tài khoản muốn tạo
+ 
+3.	Groups
+-	Nhóm là nơi tập hợp, chứa các tài khoản. Một tài khoản tạo ra bắt buộc phải join vào 1 nhóm. Tất cả các nhóm mặc định sẽ là cá nhóm tài khoản cụ thể trên hệ thống và nó không được đề nghị để sử dụng chúng cho các tài khoản thông thường.
+-	Tất cả các nhóm được liệt kê trong tệp /etc/groups. 
+-	Nhóm chia làm 2 loại bao gồm: nhóm chính và nhóm phụ.
+o	Nhóm chính: là nhóm mặc định mà user thuộc về. Mỗi một user trệ hệ thống đều thuộc về một nhóm chính. Chúng ta có thể tìm thấy thông tin về nhóm chính của user thông qua file /etc/passwd hoặc với câu lệnh “id username”
+o	Nhóm phụ: khi người dùng được tạo với nhóm chính, người dùng đó có thể được thêm vào các nhóm khác trên hệ thống. Mỗi user có thể được thêm vào tối đa 15 nhóm.
+ 
+3.1	Tạo một nhóm mới trên Linux
+-	Bạn có thể tạo một nhóm với với các giá trị defaults theo câu lệnh: “groupadd GroupName”:
+ 
+3.2	Sửa thông tin nhóm trên Linux
+-	Sau khi tạo nhóm, bạn có thể sửa tên nhóm với lệnh “groupmod -n”. Trong ví dụ này, tôi sẽ đổi tên nhóm từ VCSTEAM sang VCSTEAM_NEW
+ 
+-	Hoặc cũng có thể sửa Group IP (GID) của nhóm với câu lệnh “groupmod –g”, trong ví dụ này, 567 là GID mới cần đổi cho nhóm VCSTEAM_KEANGNAM:
+ 
+3.3	Xóa một group trên Linux
+-	Nếu bạn muốn xóa 1 group sau khi đã tạo trên Linux, chỉ cần sử dụng lệnh “groupdel GroupName” để xóa nó. Lưu ý, thao tác này chỉ xóa group, không xóa các file trên hệ thống, các file này vẫn truy cập được từ tài khoản tạo ra nó.
+ 
+-	Lưu ý, nếu như có tài khoản đặt nhóm này là primary group, phải chuyển tài khoản đó sang group khác thì mới có thể xóa được group đó. Sử dụng lệnh “usermod” để thay đổi primary group của tài khoản:
+ 
+4.	adduser / deluser
+-	adduser là lệnh để tạo ra các user/group và là phiên bản nâng cấp của useradd, groupadd, nó giúp quá trình tạo user được trực quan hơn
+-	Sự khác biệt của 2 câu lệnh adduser và useradd được nhìn thấy rõ nhất khi sử dụng trên các hệ điều hành Debian.
+ 
+-	Để thêm một user đã có vào 1 group đã có, sử dụng cú pháp “sudo adduser username groupname”
+ 
+-	Để xóa một group, sử dụng lệnh “deluser –g groupname”
+ 
+-	Để xóa một user, sử dụng lệnh “deluser username”. Mặc định nếu không khai báo thì hệ thống sẽ hiển mình thao tác với user.
+
+5.	Bash shell eviroment
+5.1	Khái niệm
+-	Biến môi trường là các đại lượng cụ thể có các giá trị cụ thể. Một số biến môi trường được cung cấp các giá trị đặt trước của hệ thống và có thể đặt trực tiếp bởi người dùng, tại dòng lệnh hoặc trong khi khởi động các tập lệnh khác.
+-	Biến môi trường là một chuỗi ký tự chứa thông tin được sử dụng bởi một hoặc nhiều ứng dụng.
+5.2	Các biến môi trường
+-	Một vài biến môi trường phổ biến bao gồm:
+o	$HOME: là biến môi trường đại diện cho thư mục gốc của người dùng.
+o	$PATH: một danh sách các thư mục sẽ được tìm kiếm khi thực hiện các lệnh. Khi bạn chạy một lệnh, hệ thống sẽ tìm kiếm các thư mục theo thứ tự này và sử dụng tệp thực thi đầu tiên được tìm thấy.
+o	$USER: người dùng đăng nhập hiện tại
+o	$SHELL: đường dẫn của shell hiện tại của người dùng, (bash , zsh)
+o	$LOGNAME: tên của người dùng hiện tại
+o	$LANG: cài đặt local hiện tại (ngôn ngữ, font chữ)
+o	$MAIL: vị trí lưu trữ thư của người dùng hiện tại
+o	$EDITOR: trình chỉnh sửa tập tin mặc định sẽ được sử dụng
+-	Cách hiển thị giá trị của một biến cụ thể: “echo $EVIROMENT” hoặc “printenv EVIROMENT”
+ 
+ 
+-	Xem các biến môi trường hiện có trên hệ thống: “printenv”
+ 
+-	Tạo một biến môi trường mới: “ValiableName=Value”. Trong ví dụ dưới, tạo biến môi trường MYVAR với giá trị là viettel-vcs và sử dụng lệnh “echo” để hiển thị giá trị của biến:
+ 
+-	Hiển thị giá trị mới của một biến: “export ValiableName=NewValue”
+ 
+-	Với 2 cách trên, giá trị của biến chỉ lưu trong phiên đăng nhập đó, nếu logout hoặc restart lại máy, giá trị của biến sẽ mất. Nếu biến đó cần giá trị cố định, chúng ta có thể khai báo trong  mục /etc/enviroment với lệnh “sudo vi /etc/enviroment” và khai báo giá trị của biến với format: “ValiableName=Value” sau đó lưu lại.
+ 
+-	Sau khi logout hoặc restart lại máy, kiểm tra lại giá trị của biến MYVAR xem có bị mất không:
+ 
+-	Sau quá trình sử dụng, nếu không muốn sử dụng biến và muốn xóa nó đi, sử dụng lệnh “unset”
+ 
+-	Ngoài ra, nếu chúng ta chỉ muốn khai báo biến cho user nhất định mà không phải là cho toàn bộ user, chúng ta có thể thêm biến mới trong file .bashrc được lưu tại /home/user/. Ví dụ thêm biến VARDATNT với giá trị helloworld2021 với user: datnt
+ 
+-	Hiển thị giá trị biến VARDATNT khi đăng nhập với user datnt:
+ 
+-	Hiển thị giá trị VARDATNT khi đăng nhập với user root:
+ 
+6.	Permission of file, directories
+6.1	Khái niệm
+-	Quyền truy cập là một phần rất quan trọng trong Linux, nó giúp tăng tính bảo mật cũng như ổn định của hệ thống Linux. Dưới đây là các quyền truy cập file và directories (folder) trên Linux:
+Thuộc tính	Files	Directories
+Read ( r)	Cho phép mở và đọc file	Cho phép quyền đọc thư mục, xem các nội dung trong thư mục đó
+Write ( w )	Cho phép ghi vào file hoặc xóa nội dung file, không cho phép xóa hoặc rename file	Được phép thêm, sửa, xóa file trong thư mục
+Execute ( x )	Cho phép file được coi như một chương trình có thể thực thi được, những file được viết bằng scripting language cũng cần phải có quyền đọc “r” để được thực thi	Thực thi lệnh, chương trình trong thư mục
+-	Trong hệ thống phân quyền của Linux bao gồm 9 bit, xác định những thao tác được thực thi trên 1 tệp và bởi ai. 9 bit này chia ra làm 3 bộ quyền xác định quyền truy cập cho chủ sở hữu tập tin, chủ sở hữu nhóm tập tin, và những người khác.Mỗi tập hợp bộ quyền tập hợp 3 quyền: 1 bit đọc, 1 bit ghi và 1 bit thực thi.
+-	Để hiện các quyền của file / directories, bạn có thể sử dụng lệnh “ls –l”. Trong ví dụ này, tôi sẽ hiển thị các quyền của file, directory của thư mục “test_permit”:
+ 
+-	Với các quyền của thư mục test_permit ở trên: “rw-rw-r--“, chúng ta có thể đọc hiểu như sau:
+o	rw-: 3 ký tự đầu chỉ quyền dành cho user tạo ra nó, ở đây có quyền đọc ( r ) và ghi (w)
+o	rw-: 3 ký tự tiếp theo chỉ quyền dành cho các user thuộc group đang sở hữu file này, ở đây có quyền đọc ( r ) và ghi (w)
+o	r--: 3 ký tự cuối cùng là quyền dành cho tất cả các user không thuộc group đang sở hữu file này. Ở đây chỉ có quyền đọc ( r )
+6.2	Quyền đặc biệt
+-	Trong Linux có 3 quyền đặc biệt bao gồm: SUID, SGID, và Sticky Bit
+6.2.1	SUID (Set User ID)
+-	Được sử dụng cho các file thực thi, giúp file đó chạy dưới quyền owner của file chứ không chạy trên tài khoản đang đăng nhập hệ thống
+-	SUID cũng hỗ trợ chuyển đổi owner của file hoặc di chuyển file đó sang thư mục mới nhưng owner sẽ là owner của thư mục chứ không phải là owner tạo ra nó.
+-	Câu lệnh để set SUID: “sudo chmod u+s filename”
+ 
+-	Ngoài ra, còn có thể set SUID theo quyền của file. Ví dụ, tôi muốn set đặt SUID cho file test_permit với quyền 750, sử dụng lệnh “chmod 4750 test_permit”
+ 
+-	Tìm tất cả các file có SUID: “find / -perm -4000”
+ 
+6.2.2	SGID (Set Group ID)
+-	Cũng giống như SUID, SGID được sử dụng cho các file thực thi, cho phép file này chạy với quyền của owner tạo ra nó chứ không phải tài khoản đang đăng nhập hệ thống.
+-	Lệnh SGID cũng hỗ trợ chuyển owner group của file hoặc di chuyển file đó sang thư mục mới và owner sẽ là owner của thư mục mới chứ không phải là của thư mục tạo ra nó.
+-	Cấu trúc để set SGID: “sudo chmod g+s filename”
+ 
+-	Cách thứ 2 để set SGID cũng giống cách 2 của SUID, chỉ cần thay 4000 thành 2000:
+ 
+-	Tìm tất cả các file có SGID: “find / -perm -2000”
+ 
+6.2.3	Sticky bit
+-	Sticky bit sinh ra nhằm mục đích tránh tình trạng các user xóa nhầm các file của nhau trên hệ thống. Sau khi cài đặt sticky bit cho thư mục, chỉ người tạo ra file đó và root có quyền xóa.
+-	Cấu trúc set sticky bit cho thư mục: “sudo chmod o+t folder”
+ 
+-	Cách thứ 2 để set Sticky Bit: “sudo chmode 1750 filename”
+ 
+-	Tìm tất cả các file có StickyBit: “find / -perm -1000”
+ 
+7.	chmod, chown command
+-	Trong trường hợp thực tế, chúng ta sẽ phải tìm cách để gán quyền cho các file, thư mục. Trong trường hợp này, chmod và chown sẽ được sử dụng tới.
+7.1	Chmod
+-	Để thay đổi quyền truy cập vào các file, thư mục, bạn sẽ sử dụng lệnh “chmod” với format: “chmod [option] [command] [filename/directories]”. Trong đó:
+o	Option: thành phần không bắt buộc, bao gồm các lựa chọn:
+	-v: hiển thị báo cáo sau khi chạy lệnh, phù hợp với việc chạy chmod nhiều file/thư mục cùng lúc, mỗi lần hoàn thành 1 file/ thư mục sẽ có hiển thị thông báo
+	-c: giống –v nhưng chỉ hiển thị thông báo sau khi tất cả đã hoàn tất
+	-f: không thông báo, kể cả lỗi
+	-R: nếu bạn “chmod” một thư mục, kèm theo –R nghĩa là áp dụng luôn cho các file/thư mục nằm bên trong nó.
+o	Command: biểu diễn phân quyền của thư mục. Chúng ta có 2 kiểu biểu diễn:
+	Kiểu ugo (u+s,o+t,…)
+	Kiểu số (750, 777,…)
+-	Với kiểu ugo, sẽ có 3 tham số chính bao gồm: “u” (các user quyền sở hữu của file, thư mục), “g” (group có quyền sở hữu file, thư mục), “o” (các người dùng khác, không có quyền sở hữu file, thư mục)
+o	Phép toán phân quyền:
++ : thêm quyền vào file, directories
+- : bớt quyền vào file, directories
+= : gán quyền cho file, directories
+-	Ví dụ thêm quyền thực thi (x) cho thư mục test_permission trên tài khoản root:
+ 
+-	Với kiểu số, chúng ta sẽ có bảng phân quyền như sau:
+ 
+-	Ví dụ thay đổi quyền test_new từ 666 sang 777:
+ 
+7.2	Chown
+-	Mặc định, khi một file / thư mục được tạo ra sẽ thuộc quyền sở hữu của user/group tạo ra nó. Vì thế, mặc định ngoại trừ tài khoản tạo ra nó và root thì sẽ không có user/group nào có quyền thêm, sửa trên file / thư mục này.
+-	Để thay đổi quyền chủ sở hữu của file, thư mục, bạn cần phải sử dụng “chown -R [user]:[group] [filename/folder]”. Như ví dụ dưới đây, tôi đổi quyền chủ sở hữu của thư mục test_permission từ root sang datnt.
+ 
+-	Lưu ý, việc đổi quyền chủ sở hữu của thư mục cần phải chạy dưới quyền root, nếu như tài khoản đang đăng nhập không phải là root thì cần thêm lệnh “sudo” phía trước “chown”
+8.	Sudo command
+-	Sudo là một chương trình trong hệ điều hành Unix. Nó cho phép một tài khoản có thể có các đặc quyền của tài khoản khác mà không cần cấp quyền đặc biệt.
+-	Không giống với quyền “su” phải cung cấp mật khẩu tài khoản root cho người dùng, với quyền “sudo”, khi tài khoản có quyền sudo chỉ cần nhập mật khẩu của mình để thực hiện tác vụ. Để xác nhận các quyền của các Users, Sudo sử dụng file config (/etc/sudoers)
+-	Để thêm, sửa các user với quyền sudo, sử dụng lệnh “sudo visudo -f /etc/sudoers” để chỉnh sửa file.
+-	Mặc định, tài khoản được tạo khi cài đặt OS sẽ được thêm vào sudoers để có quyền sudo, để thêm một tài khoản đã tồn tại có quyền sudo, sử dụng cú pháp: “sudo adduser [username] sudo”
+-	Ngoài việc thêm user có quyền sudo ở trên, có thể cấu hình quyền đặc biệt cho user bằng cách truy cập vào file /etc/sudoers và chỉnh sửa nó với lệnh “sudo visudo –f /etc/sudoers”
+-	Mặc định, tài khoản root sẽ có full quyền ở mọi nơi trên hệ thống (ALL – không giới hạn)
+ 
+-	Thêm một tài khoản mới với quyền đặc biệt bằng câu lệnh với cú pháp:
+user hostname= (runas-user:runas-group) command
+-	Trong đó:
+o	User: tài khoản sẽ có quyền đặc biệt
+o	Hostname: những nơi mà tài khoản này có thể chạy quyền đặc biệt.
+o	(runas-user:runas-group): chạy với quyền của ai, group nào
+o	Command: quyền đặc biệt mà tài khoản có thể chạy
+ 
+-	Trong ví dụ trên, đặt tài khoản datnt_vcs có thể tắt máy ở bất cứ đâu với full tài khoản, group.
+-	Với việc đặt % trước user như “%admin” ở trên tức là cho phép toàn bộ người dùng trong nhóm admin có full quyền với sudo.
+
+Resources:
+https://tldp.org/LDP/Bash-Beginners-Guide/html/chap_03.html
+https://quantrimang.com/quan-ly-nguoi-dung-trong-unix-linux-157651
+https://viblo.asia/p/lap-trinh-shell-bash-script-1VgZvER9KAw
+https://freetuts.net/cac-quyen-truy-cap-file-va-folder-tren-linux-425.html
+https://news.cloud365.vn/linux_basic-sticky-bit-suid-sgid/
+https://vntuts.net/phan-quyen-trong-linux-voi-chmod-va-chown/
