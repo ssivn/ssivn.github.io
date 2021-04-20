@@ -1,0 +1,99 @@
+HỆ ĐIỀU HÀNH LINUX
+System Startup and Shutdown
+
+I.	System startup process
+-	Quá trình khởi động của Linux gồm các bước:
+1.	BIOS (Basic Input/Output System): 
+-	Đây là chương trình đầu tiên khởi chạy khi ấn nút poweron hoặc reset trên máy tính, nó được cài sẵn trong chip ROM của bo mạch chủ. Nó sẽ  thực hiện công việc có tên là POST (Power-on Self-test) để kiểm tra các thông số của các phần cứng máy tính, ngoài ra nó còn cho phép thay đổi các thiết lập, cấu hình.
+-	Quá trình POST kết thúc thành công, BIOS sẽ tìm kiếm và khởi chạy một hệ điều hành được chứa trong các thiết bị lưu trữ như ổ cứng, USB,… nếu hệ điều hành Linux được cài trên ổ cứng, BIOS sẽ tìm tới MBR 
+2.	MBR (Master Boot Record)
+-	Sector đầu tiên (được đánh số 0) của một thiết bị lưu trữ được gọi là MBR
+-	BIOS sẽ đọc MBR của thiết bị này để nạp vào bộ nhớ một chương trình rất nhỏ. Chương trình này sẽ định vị và khởi động bootloader – đây là chương trình chịu trách nhiệm cho việc tìm và nhập nhân hệ điều hành (kernel)
+-	Đến giai đoạn này máy tính sẽ không truy cập vào bấy kỳ phương tiện lưu trữ nào nữa. Các thông tin về ngày tháng, thời gian và các thiết bị ngoại vi quan trong được nạp từ CMOS.
+3.	Bootloader
+-	Bootloader sẽ nằm trong MBR. Khi khởi động Linux, bootloader có trách nhiệm nạp kernel và Initial RAM Disk (có chứa một số tệp quan trọng và trình điều khiển thiết bị cần thiết để khởi động vào hệ thống) vào bộ nhớ.
+-	Có 2 bootloader phổ biến trên Linux là GRUB và LILO (tiền thân của GRUB). Nó cho phép lựa chọn một trong các hệ điều hành có trên máy tính để khởi động, sau đó chúng sẽ nạp kernel của hệ điều hành vào bộ nhớ và chuyển quyền điều khiển máy tính cho kernel này.
+4.	Linux Kernel được nạp và khởi chạy
+-	Kernel đóng vai trong để shell có thể giao tiếp và điều khiển phần cứng. Khi bootloader nạp một phiên bản dạng nén của Linux kernel, ngay lập tức nó sẽ tự giải nén và tự cài đặt mình lên RAM, nó sẽ ở đó cho tới khi chúng ta tắt máy.
+5.	Các script trong các INITRD được thực thi
+-	Do các nhà phát triển Linux không thể biết được chính xác cấu trúc máy tính của người sử dụng sẽ như nào, gồm những linh kiện gì. Nên các INITRD cung cấp một giải pháp: một tập các chương trình nhỏ sẽ được thực thi khi kernel vừa mới được khởi chạy, các chương trình nhỏ này sẽ dò quét phần cứng của hệ thống và xác định xem kernel cần được hỗ trợ thêm những gì để có thể quản lý được các phần cứng đó. Chương trình INITRD kết thúc thì quá trình khởi động Linux sẽ tiếp diễn.
+6.	Chương trình init được thực thi
+-	Khi kernel được khởi chạy xong, nó sẽ gọi duy nhất một chương trình có tên là init. Tiến trình này có Process ID = 1, là cha của tất cả các tiến trình khác có trên hệ thống Linux. Do tính chất quan trọng này, init sẽ không thể stop được (khi sử dụng lệnh kill).
+-	Sau đó, init sẽ xem xét trong file /etc/inittab để biết được nó cần làm gì tiếp theo: dựa vào runlevel mặc định để thực thi các script khởi động (initscript) tương ứng trong mục /etc/rc.d
+-	Các runlevel trên Linux:
+o	Level 0: tắt máy
+o	Level 1: chế độ chỉ sử dụng được 1 người (single-user)
+o	Level 2: chế độ multi-user nhưng không không có NFS (thường không được sử dụng)
+o	Level 3: chế độ multi-user nhưng không có giao diện đồ họa
+o	Level 4: không được sử dụng
+o	Level 5: chế độ đồ họa (GUI)
+o	Level 6: khởi động lại máy tính
+-	Cú pháp để sử dụng init: “init runlevel”
+ 
+7.	Các initscript được thực thi dựa trên runlevel được chọn
+-	Hệ thống sẽ kiểm tra trong file /etc/inittab và chạy các script có tên bắt đầu bằng chữ S. Như vậy init sẽ khởi động tất cả các hệ thống con hoặc các dịch vụ  để tạo thành 1 hệ thống Linux hoàn chỉnh.
+-	Tới đây, init đã hoàn thành vai trò của mình, nó sẽ tạm thời pending cho tới khi có một chương trình bị down hoặc restart.
+8.	Đăng nhập vào giao diện
+-	Subsystem cuối cùng được init khởi động lên là X Windows, đây là hệ thống cung cấp giao diện đồ họa cho người dùng Linux.
+-	Một vài GUI phổ biến: GMD (nằm trong gói GNOME) và KDM (nằm trong gói KDE)
+ 
+II.	The startup script framework
+-	Hiện tại có 3 framework phổ biến: SysV, Upstart và systemd.
+-	SysV được là nền tảng đầu tiên để quản lý tiến trình khởi động Linux. Hiện tại do không đáp ứng được với sự phát triển của các bản Linux mới nên đã không còn được sử dụng nữa. 
+-	Upstart là phiên bản được phát triển cho Ubuntu Linux, và từ Ubuntu v16, hãng cũng đã chuyển sang sử dụng systemd.
+-	Systemd được ra mắt gần đây (2010) và là phiên bản ổn định nhất, cập nhật nhiều tính năng hơn. Điểm hay của systemd đó là nó có thể tương thích ngược với SysV và Upstart.
+1.	SystemV
+-	Key của SystemV đó chính là run-level (7 cấp độ, được đánh số từ 0 đến 6). Chương trình init sẽ biết được những dịch vụ nào sẽ khởi động cùng hệ thống thông qua run-level được chọn. Sau khi khởi động, hệ thống sẽ chạy vào cấp run-level mà chúng ta đã đặt từ trước. Chúng ta có thể thay đổi cấp run-level.
+-	Để có thể thay đổi giữa các run-level, chúng ta có 2 cách: Cách 1 - thay đổi trong /etc/inittab hoặc Cách 2 - sử dụng lệnh “init run-level”.
+-	Với Cách 1: sử dụng lệnh “vi /etc/inittab” và thay id của run-level muốn chạy vào lần khởi động tiếp theo, lưu ý, không được set level 0 và 6 làm mặc định, nếu như set 0 hoặc 6, sau khi hệ thống khởi động lên sẽ tự động tắt máy / reboot liên tục.
+ 
+-	Với Cách 2, chúng ta chỉ cần gõ “init run-level” để thay đổi giữa các run-level. Lưu ý, cách này chỉ được áp dụng tại thời điểm đó, sau khi hệ thống tắt hoặc reboot, hệ thống sẽ khởi chạy vào run-level được khai báo trong /etc/inittab.
+-	Tập lệnh /etc/rc.d/rc sinh ra để chạy tất cả các tập lệnh được liên kết với run-level tương tứng. Các tập lệnh dành riêng cho từng run-level đều được liệt kê trong /etc/rc.d/rc?.d, trong đó ? là cấp run-level tương ứng. Khi run-level được lựa chọn, tập lệnh “rc” sẽ bắt đầu chạy các tập lệnh bắt đầu với ký tự “S” và dừng các tập lệnh bắt đầu với ký tự “K”. Các tập lệnh này được đánh số và chương trình “rc” chạy theo thứ tự số.
+ 
+-	Để kiểm tra run-level đang chạy, sử dụng lệnh “runlevel” hoặc “cat /etc/inittab”
+ 
+2.	Systemd
+-	Thay vì sử dụng các shell và run-level để quản lý, systemd kiểm soát hệ thống dựa trên “unit” và “target”.
+-	Một unit file bao gồm 3 phần chính: [Unit], [Service], [Install]
+o	[Unit] là phần đầu tiên của một unit file. Phần này sẽ cho phép chúng ta biết thông tin cơ bản của một file.
+o	[Service] là phần khai báo thông tin về loại unit sẽ sử dụng. Cụ thể ở đây unit file này là file dịch vụ (service). Tại đây, chúng ta có thể chỉ định các lệnh được thực thi khi dịch vụ được khởi động,… Ngoài service còn một số loại khác như: socket, device, mount, automount,…
+o	[Install] là phần cuối cùng của một file, chứa thông tin cài đặt thiết bị
+ 
+-	.target được sử dụng để nhóm và sắp xếp các units. Nó tương tự kiểu như run-level, với các mục tiêu khác nhau, các units sẽ được khởi động khác nhau.
+3.	Viết một service
+-	Ví dụ, viết một service trên systemd, xuất ra câu “helllo” 4s một lần 
+ 
+ 
+ 
+III.	Managing service with system/service/systemctl
+-	Systemctl để kiểm soát các dịch vụ và mục tiêu. Chương trình systemctl sử dụng các tùy chọn để xác định hành động cần thực hiện:
+o	list-units: hiển thị trạng thái hiện thời của tất cả các đơn vị được cấu hình
+o	defaults: các thay đổi đối với đơn vị mục tiêu mặc định
+o	isolate: khởi động các đơn vị đã đặt tên và dừng tât cả các đơn vị khác
+o	start name: khởi động đơn vị 
+o	stop name: dừng đơn vị
+o	reload name: khởi động lại file cấu hình của các đơn vị đã đặt tên
+o	restart name: tắt và khởi động lại các đơn vị đã đặt tên
+o	status name: hiển thị trạng thái của các đơn vị đã đặt tên
+o	enable name: cấu hình các đơn vị để khởi động khi máy khởi động lại lần tiếp theo
+o	disable name: cấu hình các đơn vị để không khởi động khi máy khởi động lại lần tiếp theo.
+-	Ví dụ về tắt/bật apache2:
+ 
+IV.	Shutdown and rc
+-	Lệnh shutdown được dùng để tạm dừng, tắt hoặc khởi động lại hệ thống.
+-	Cấu trúc của câu lệnh shutdown:
+shutdown [Option] [Time] [Depcription]
+-	Trong đó:
+o	Option: các lựa chọn tạm ngừng thiết bị, khởi động và tắt thiết bị:
+	-H: tạm ngưng thiết bị
+	-P: tắt thiết bị
+	-r: khởi động lại thiết bị
+	-h: tương tự với câu lệnh “poweroff” – tắt máy ngay lập tức,
+	-c: hủy bỏ lệnh poweroff đang chờ thực thi.
+o	Time: thời gian sẽ tắt máy, ở đây sẽ theo định dạng hh:mm. Cũng có thể sử dụng cú pháp “+mm” để hệ thống sẽ đếm ngược thời gian từ mm phút tới lúc thực hiện lệnh poweroff.
+o	Depcription: gửi thông báo tới những người dùng khác đang login vào hệ thống.
+-	Ví dụ đặt lệnh tắt máy vào lúc 0:01 với ghi chú “maintainance server”
+ 
+-	Thông báo từ hệ thống tới các người dùng khác đang login vào:
+ 
+
