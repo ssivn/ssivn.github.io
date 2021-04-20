@@ -1,0 +1,147 @@
+HỆ ĐIỀU HÀNH LINUX
+CONNECTING LINUX TO THE NETWORK
+
+
+I.	THIẾT LẬP KẾT NỐI MẠNG
+-	Để một máy tính PC kết nối với mạng nội bộ và ra internet, chúng ta cần phải cấu hình theo các bước:
+o	Cấu hình 1 IP và hostname của thiết bị
+o	Đảm bảo các network interface được khởi động
+o	Thiết lập routing
+o	Thiết lập DNS
+1.	Hostname
+-	Hostname là chương trình được sử dụng để thiết lập hoặc hiển thị tên máy chủ, tên miền của hệ thống Linux. Tên này được sử dụng bởi các phần mềm network để xác định trên hệ thống mạng
+-	Để hiển thị tên hostname của thiết bị, sử dụng lệnh “hostname”
+ 
+-	Nếu muốn thay đổi tên hostname, chúng ta cần chỉnh sửa hostname trong /etc/hostname: xóa tên cũ và gõ tên mới vào tập tin này, sau đó save lại. Sau đó, chỉnh sửa thêm file host với lệnh “vi /etc/hosts”. Sửa tên hostname cũ thành hostname mới và save lại
+ 
+-	Sau đó cần phải khởi động lại máy để apply. Sau khi khởi động lại, tên hostname mới sẽ hiển thị ở ngay dấu nhắc lệnh (viettel-vcs). Hoặc có thể dùng lệnh “hostname” để kiểm tra
+ 
+-	Ngoài ra, chúng ta có thể sử dụng lệnh hostnamectl để đổi hostname mà không cần phải chỉnh sửa các file, với cú pháp “hostnamectl set-hostname HOSTNAME”
+ 
+2.	Network Interface
+-	ifconfig là câu lệnh để tắt/bật network interface, đặt địa chỉ IP,… Nó thường được chạy tại thời điểm khởi động và các tham số dòng lệnh được lấy từ các tệp cấu hình
+-	Cấu trúc của một câu lệnh ifconfig:
+ifconfig interface [family] address options
+o	interface: nhằm xác định card mạng mà lệnh sẽ apply. Nó thường sẽ bắt đầu bởi 2-3 ký tự kèm theo số ở đằng sau. Để kiểm tra interface name, gõ lệnh “ip addr” hoặc
+o	family: khai báo giao thức mạng cần cấu hình. “inet” cho Ipv4 hoặc “inet6” cho Ipv6. Nếu không nhập tham số này, hệ thống mặc định sẽ đặt là “inet” (Ipv4)
+o	address: chỉ định địa chỉ IP của interface
+o	options: đồng thời, chúng ta cũng có thể cấu hình thêm các lựa chọn như bật interface đó lên (command: “up”) hoặc tắt nó đi (command: “down”). Ngoài ra, còn có một vài options: -a (hiển thị tất cả các interface đang sẵn sàng), -s (hiển thị danh sách interface ngắn – tương tự “netstat –i”)
+-	Ví dụ, đặt IP cho interface ens38 là 192.168.1.10/24, và enable interface đó, sử dụng câu lệnh:
+ 
+-	Có thể sử dụng “ip addr” để kiểm tra xem đã nhận IP và enable được chưa:
+ 
+-	Nếu muốn cấu hình DHCP cho network interface, sử dụng lệnh “dhclient” - Dynamic Host Configuration Protocol Client để cấu hình với cấu trúc: “dhclient interface –v”. Với option “-v” để bật thông báo logs chi tiết
+ 
+-	Ngoài ra, cũng có thể sử dụng lệnh “ip addr” để thêm IP cho network interface
+ 
+-	Với các cách cấu hình IP ở trên chỉ được áp dụng tới khi restart lại OS. Nếu muốn nó không bị mất thì cần phải chỉnh sửa file trong hệ thống.
+-	Đối với hệ điều hành Ubuntu/Debian, cần chỉnh sửa cấu hình file .yaml tại /etc/netplan. Cần phải khai báo thông tin theo cú pháp của netplan mới có thể save được. Ví dụ muốn khai báo địa chỉ IP tĩnh cho interface ens38:
+ 
+-	Sau đó gõ lệnh “netplan apply” để áp dụng cấu hình. Sử dụng “ip addr” để kiểm tra xem câu lệnh đã nhận chưa:
+ 
+-	Đối với hệ điều hành CentOS, chúng ta sửa cấu hình trong file ifcfg-interface được lưu tại: /etc/sysconfig/network-scripts/. Trong đó, interface là tên card mạng muốn thay đổi.
+ 
+-	Các thông tin quan trọng của file:
+o	TYPE: kiểu của card mạng
+o	BOOTPROTO: giao thức của card mạng (none: không sử dụng boot-time, bootp: sử dụng BOOTP – boostrap protocol, dhcp: sử dụng DHCP)
+o	DEFROUTE | IPV6_DEFROUTE: default route, có 2 lựa chọn:
+	yes: đây là interface được set default route cho các traffic Ipv4/Ipv6
+	no: interface này không được set là default route
+o	IPV4_FAILURE_FATAL | IPV6_FAILURE_FATAL:
+	yes: interface này sẽ tắt nếu Ipv4 cấu hình không thành công
+	no: interface này sẽ không tắt nếu cấu hình lỗi
+o	IPV6INIT:
+	yes: bật Ipv6 trên interface này
+	no: tắt Ipv6 trên interface này
+o	IPADDR: địa chỉ IP muốn đặt cho interface
+o	PREFIX: subnet mask của lớp mạng
+o	GATEWAY: địa chỉ gateway
+o	DNS1 | DNS2: thông tin DNS Server
+o	DEVICE: tên của interface
+o	ONBOOT:
+	yes: interface này sẽ enable trong quá trình khởi động
+	no: interface này sẽ không enable trong quá trình khởi động
+-	Ngoài ra, chúng ta có thể cấu hình với giao diện với câu lệnh “nmtui”. Để activate interface, chọn Activate a connection và activate interface muốn sử dụng.
+ 
+-	Để chỉnh sửa thông tin IP của interface, chọn Edit a connection
+ 
+-	Cũng có thể thay đổi hostname của hệ thống tại lựa chọn Set system hostname
+ 
+-	Sau cùng, để interface nhận cấu hình, sử dụng lệnh “systemctl restart network”
+-	Để tắt / bật nhanh một network interface, chúng ta sử dụng lệnh “ifconfig interface up” hoặc “ifconfig interface down”. Hoặc đơn giản “ifup interface”, “ifdown interface”
+3.	DNS
+-	DNS là dịch vụ phân giải tên miền, dùng để phân giải giữa địa chỉ IP và hostname. Để sử dụng được DNS trên Linux, chúng ta cần phải khai báo ít nhất một máy chủ DNS trong file /etc/resolv.conf.
+ 
+-	Để cấu hình được DNS tùy chỉnh, đầu tiên, interface phải được đặt IP tĩnh. Tuy nhiên, với việc thay đổi nameserver tại resolv.conf, khi restart lại máy, file này sẽ bị ghi đè và trở về cấu trúc ban đầu. 
+-	Để có thể apply DNS vĩnh viễn cho interface, chúng ta có thể khai báo DNS trong phần cấu hình IP của nó hoặc có thể cấu hình bên trong “dhclients” với lệnh “vi /etc/dhcp/dhclient.conf” trong “option domain-name-servers”
+ 
+4.	Routing
+-	Route là một dòng thông tin trong bảng định tuyến, hỗ trợ kernel xác định được IP packet sẽ được gửi đến đích IP theo đường nào. Việc cấu hình route rất quan trọng để hệ thống có thông suốt với phần network nhằm hoạt động ổn định.
+-	Để liệt kê thông tin của bảng định tuyến, sử dụng lệnh “route”
+ 
+-	Trong đó bao gồm các cột:
+o	Destination: mạng đích
+o	Gateway: cổng được xác định cho mạng
+o	Genmask: subnetmask của mạng
+o	Flags: có rất nhiều giá trị để thông báo với 1 route:
+	U: route đang up
+	H: đối tượng là host
+	G: sử dụng route này là route gateway
+	R: routing động
+	D: routing động tạo ra bởi một dịch vụ
+	M: được chỉnh sửa bỏi một dịch vụ
+	A: được cài đặt bỏi addrconf
+	C: cache entry
+	!: route bị reject
+o	Metric: khoảng cách đến mục tiêu (được tính bằng bước nhảy)
+o	Ref: số lượng tham chiếu đến tuyến đường này
+o	Use: số lượng tra cứu cho tuyến đường
+o	Iface:
+o	 giao diện mà các gói cho tuyến đường này sẽ được gửi đến
+-	Để thêm một route trong bảng định tuyến, sử dụng lệnh “route add”.
+ 
+-	Trong đó:
+o	-net: tại lựa chọn này, chúng ta có thể lựa chọn route cho 1 dải mạng (-net) hoặc 1 host cụ thể (-host)
+o	192.168.10.0: địa chỉ mạng / host
+o	netmask 255.255.255.0: subnetmask của mạng
+o	gw 192.168.234.2: địa chỉ gateway, cụ thể là địa chỉ của máy đối diện trên đường route
+o	ens33: interface của đường mạng hướng tới mạng cần route
+-	Ngoài ra, chúng ta có thể thêm route với câu lệnh “ip route add”. Trong đó:
+o	192.168.12.0/24: dải mạng cần route
+o	192.168.234.2: gateway
+o	ens33: interface của đường mạng hướng tới mạng cần route
+ 
+-	Để xóa một route, thay “add” thành “del” để xóa:
+ 
+-	Để thêm một default route:
+ 
+-	Để xóa default route, sử dụng lệnh “ip route del default”
+ 
+II.	Network Time, timezone
+-	NTP (Network Time Protocol) là một giao thức chạy trên cổng 123 UDP tại tầng Transport. Nó giúp cho các máy tính trên hệ thống đồng bộ hóa thời gian qua mạng trong một thời gian chính xác. Khi thời gian trôi qua, đồng hồ bên trong của máy tính có xu hướng trôi đi dẫn đến các vấn đề về thời gian không được nhất quán. Giao thức NTP được thiết kế để tránh ảnh hưởng của độ trễ bằng cách sử dụng bộ đệm jitter.
+-	Để sử dụng được NTP, chúng ta phải cài đặt nó, sử dụng lệnh  “apt install ntp” 
+ 
+-	Tiếp đến, tìm kiếm NTP server theo múi giờ muốn đồng bộ. Ví dụ ở đây sử dụng ntpserver dc01.visc.com:
+ 
+-	Để các máy client có thể truy vấn cập nhật thời gian từ ntpserver, chúng ta phải khai báo các dải mạng trong phần ntp.conf như hình dưới, sau đó lưu file ntp.conf:
+ 
+-	Tiếp đến mở cổng 123 trên firewall với câu lệnh “sudo ufw allow 123”, sau đó reload lại firewall để apply, đồng thời restart lại ntp service.
+ 
+-	Chỉnh timezone của hệ thống về Asia / Ho Chi Minh:
+ 
+-	Kiểm tra xem ntpserver đã cập nhật thời gian chưa với câu lệnh “ntpq –p”
+ 
+-	Kiểm tra thời gian đã cập nhật đúng chưa với câu lệnh “timedatectl”
+ 
+-	Trên máy client, cài đặt gói ntpdate để cập nhật thời gian với NTP Server với câu lệnh “apt-get install ntpdate” và tắt đồng bộ thời gian sử dụng timedatectl với câu lệnh “timedatectl set-ntp false”.
+ 
+-	Để cập nhật thời gian với NTP Server và kiểm tra xem hệ thống đang bị lệch bao nhiêu giây so với NTP Server, chúng ta sử dụng lệnh “ntpdate NTP_Server”
+ 
+-	Để ntpdate tự động cập nhật thời gian với NTP Server, chúng ta sẽ cấu hình trong crontab để tự động cập nhật mỗi 5 phút một lần:
+ 
+-	Nếu trên máy client sử dụng ntp service để cập nhật thời gian, cần khai báo thông tin của NTP Server trong /etc/ntp.conf:
+ 
+-	Để cập nhật thời gian và kiểm tra số giây bị lệch so với NTP Server, sử dụng câu lệnh “sntp –s NTP_SERVER”
+ 
+-	Để hệ thống tự cập nhật thời gian với NTP Server, chúng ta cũng sẽ cấu hình crontab tương tự như ntpdate:
+ 
