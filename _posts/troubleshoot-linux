@@ -1,0 +1,38 @@
+HỆ ĐIỀU HÀNH LINUX
+TROUBLESHOOTING LINUX
+
+I.	Troubleshooting
+1.	CPU
+-	Sử dụng lệnh “top” để hiển thị những process nào đang sử dụng nhiều CPU hoặc RAM nhất, mặc định lệnh “top” sẽ liệt kê các process nào đang chiếm nhiều dung lượng CPU nhất. Nếu muốn liệt kê process theo dung lượng RAM, sử dụng lệnh “top –o %MEM”
+ 
+-	Chúng ta có thể thay đổi giá trị NICE của process để process đó giảm bớt sử dụng CPU của hệ thống. Giá trị NICE nằm từ -20 tới +19, giá trị càng cao, độ ưu tiên càng thấp > tài nguyên được sử dụng sẽ càng ít. 
+-	Sử dụng lệnh “r” trong top để thay đổi NICE của process.
+ 
+-	Nếu như ứng dụng không phản hồi, chúng ta cần phải dừng tiến trình lại để hệ thống không quá tải. Sử dụng lệnh “k” trong top và nhập PID để dừng tiến trình đó. Sử dụng lệnh “kill -9 
+-	Nếu vẫn không được, chúng ta có thể xem xét restart service hoặc hệ thống
+2.	RAM
+-	Với RAM, chúng ta có thể sử dụng lệnh “free –h” để kiểm tra dung lượng RAM hiện tại của hệ thống.
+ 
+-	“used” là phần tổng dung lượng ram hệ thống đang sử dụng, để đảm bảo hệ thống chạy ổn định và tốt nhất, used phải luôn nhỏ hơn “total”.
+-	Tìm kiếm lỗi hết dung lượng bộ nhớ trong log với câu lệnh “grep -i -r 'out of memory' /var/log/”
+ 
+-	Tất cả các process trên hệ thống đều được cung cấp dung lượng bộ nhớ cao hơn yêu cầu của nó. Điều này sẽ dẫn đến tình trạng quá tải ram nếu như ứng dụng cần nhiều bộ nhớ. Để kiểm tra giá trị overcommit_memory của hệ thống, sử dụng câu lệnh “sudo sysctl –a | grep vm.overcommit_memory”, 1 trong 3 giá trị sẽ được xuất ra:
+o	0: được đặt mặc định, khi ứng dụng yêu cầu thêm bộ nhớ, hệ thống sẽ tính toán lại số lượng bộ nhớ trống để cấp phát.
+o	1: hệ thống luôn cấp thêm bộ nhớ khi ứng dụng yêu cầu và không kiểm tra lại xem hệ thống có còn đủ bộ nhớ không.
+o	2: hệ thống sẽ không phân bổ bộ nhớ theo yêu cầu, nó sẽ cung cấp bộ nhớ theo giá trị được khai báo trong overcommit_ratio (là giá trị % RAM sẽ được sử dụng trong hệ thống, mặc định là 50%). Lúc này, dung lượng bộ nhớ sẽ được tính với công thức: 
+Swap space + RAM * (overcommit_ratio / 100)
+ 
+-	Để thay đổi giá trị overcommit_memory và overcommit_ratio, sử dụng câu lệnh:
+ 
+-	Với việc khai báo trên, giá trị sẽ bị reset khi khởi động lại. Để giá trị không bị thay đổi, chúng ta cần sửa trong file /proc/sys/vm/overcommit_memory(ratio).
+-	Nếu với phương pháp trên không giải quyết được, chúng ta nên nâng cấp ram cho hệ thống để chạy ổn định hơn.
+II.	Booting to rescue system / recovery root password
+3.	Để truy cập được vòa rescue system, khi máy bật lên, ấn phím “e”. Khai báo thêm “systemd.unit=rescue.target” vào cuối dòng linux.
+ 
+4.	Ấn F10 để boot. Giao diện rescue sẽ như sau:
+ 
+5.	Tại đây chúng ta có thể xem log với câu lệnh journalctl –xb, reboot hệ thống với systemctl reboot, boot vào mode mặc định với câu lệnh systemctl default hoặc exit. Để sử dụng được những câu lệnh trên, chúng ta cần phải đăng nhập với quyền root.
+6.	Nếu như bị mất password root của hệ thống, gõ lệnh “e” khi khởi động máy lên, nhập “rw init=/bin/bash” phía sau linux.
+ 
+7.	Gõ lệnh “passwd” để thay đổi password của root, hệ thống thông báo như trong hình là thành công. Khởi động lại máy để kiểm tra
+ 
